@@ -7,6 +7,7 @@ import * as THREE from "three";
 import AetherCrystal from "@/components/AetherCrytal";
 import WorldGround from "@/components/WorldGround";
 import Avatar from "@/components/Avatar";
+import { useDayNight } from "@/hooks/useDayNight";
 
 import { ZONES } from "@/data/zones";
 
@@ -22,15 +23,11 @@ const zoneTriggers = ZONES.map(
   })
 );
 
-export default function Scene() {
+function SceneInner() {
+  useDayNight();
+
   return (
-    <Canvas
-      orthographic
-      camera={{
-        position: [10, 10, 10],
-        zoom: 80,
-      }}
-    >
+    <>
       <ambientLight intensity={0.2} />
 
       <directionalLight
@@ -62,6 +59,20 @@ export default function Scene() {
           zones={zoneTriggers}
         />
       </Suspense>
+    </>
+  );
+}
+
+export default function Scene() {
+  return (
+    <Canvas
+      orthographic
+      camera={{
+        position: [10, 10, 10],
+        zoom: 80,
+      }}
+    >
+      <SceneInner />
     </Canvas>
   );
 }

@@ -23,11 +23,12 @@ export default function ZonePanel() {
 
   return (
     <div
+      key={zone.id}
+      style={{ animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
       className="
         absolute
         bottom-6
         left-1/2
-        -translate-x-1/2
         w-[720px]
         max-w-[92vw]
         pointer-events-none
@@ -128,6 +129,16 @@ export default function ZonePanel() {
               }
             })()}
           </div>
+        </div>
+
+        {/* Footer Hint */}
+        <div className="border-t border-white/5 bg-white/[0.02] px-6 py-4 flex justify-between items-center">
+          <span className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+            Link Stable
+          </span>
+          <span className="text-xs text-gray-400 font-mono tracking-wide">
+            Walk away to close
+          </span>
         </div>
       </div>
     </div>
