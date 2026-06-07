@@ -18,7 +18,11 @@ export type Zone = {
 export function useKeyboardMovement(
   groupRef: React.RefObject<THREE.Group | null>,
   ringRef?: React.RefObject<THREE.Mesh | null>,
-  zones?: Zone[]
+  zones?: Zone[],
+  directionRef?: React.MutableRefObject<
+    "up" | "down" | "left" | "right"
+  >,
+  isMovingRef?: React.MutableRefObject<boolean>
 ) {
   const keysPressed = useRef<KeysPressed>(
     {}
@@ -28,15 +32,19 @@ export function useKeyboardMovement(
     const handleKeyDown = (
       event: KeyboardEvent
     ) => {
-      keysPressed.current[event.key] =
+      keysPressed.current[event.code] =
         true;
     };
 
     const handleKeyUp = (
       event: KeyboardEvent
     ) => {
-      keysPressed.current[event.key] =
+      keysPressed.current[event.code] =
         false;
+    };
+
+    const handleBlur = () => {
+      keysPressed.current = {};
     };
 
     window.addEventListener(
@@ -49,6 +57,11 @@ export function useKeyboardMovement(
       handleKeyUp
     );
 
+    window.addEventListener(
+      "blur",
+      handleBlur
+    );
+
     return () => {
       window.removeEventListener(
         "keydown",
@@ -58,6 +71,11 @@ export function useKeyboardMovement(
       window.removeEventListener(
         "keyup",
         handleKeyUp
+      );
+
+      window.removeEventListener(
+        "blur",
+        handleBlur
       );
     };
   }, []);
@@ -73,23 +91,50 @@ export function useKeyboardMovement(
 
     const up =
       keysPressed.current["ArrowUp"] ||
-      keysPressed.current["w"] ||
-      keysPressed.current["W"];
+      keysPressed.current["KeyW"];
 
     const down =
       keysPressed.current["ArrowDown"] ||
-      keysPressed.current["s"] ||
-      keysPressed.current["S"];
+      keysPressed.current["KeyS"];
 
     const left =
       keysPressed.current["ArrowLeft"] ||
-      keysPressed.current["a"] ||
-      keysPressed.current["A"];
+      keysPressed.current["KeyA"];
 
     const right =
       keysPressed.current["ArrowRight"] ||
-      keysPressed.current["d"] ||
-      keysPressed.current["D"];
+      keysPressed.current["KeyD"];
+
+    const moving =
+      up ||
+      down ||
+      left ||
+      right;
+
+    if (isMovingRef) {
+      isMovingRef.current =
+        moving;
+    }
+
+    if (up && directionRef) {
+      directionRef.current =
+        "up";
+    }
+
+    if (down && directionRef) {
+      directionRef.current =
+        "down";
+    }
+
+    if (left && directionRef) {
+      directionRef.current =
+        "left";
+    }
+
+    if (right && directionRef) {
+      directionRef.current =
+        "right";
+    }
 
     // Forward
     if (up) {
@@ -115,19 +160,12 @@ export function useKeyboardMovement(
       position.z -= speed;
     }
 
-    // Ring follows avatar
-    if (ringRef?.current) {
-      ringRef.current.position.x =
-        position.x;
+    // Constrain to ground mesh boundaries (20x20 grid, centered at 0)
+    const BOUND = 9.8;
+    position.x = Math.max(-BOUND, Math.min(BOUND, position.x));
+    position.z = Math.max(-BOUND, Math.min(BOUND, position.z));
 
-      ringRef.current.position.z =
-        position.z;
-
-      ringRef.current.position.y =
-        0.01;
-    }
-
-    // Proximity detection
+    // Proximity Detection
     const {
       visitZone,
       setCurrentZone,
@@ -147,7 +185,6 @@ export function useKeyboardMovement(
       }
     });
 
-    // Reset current zone
     if (!insideZone) {
       setCurrentZone(null);
     }

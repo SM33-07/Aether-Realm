@@ -1,3 +1,9 @@
+export type CrystalShape =
+  | "torusKnot"
+  | "icosahedron"
+  | "dodecahedron"
+  | "torus";
+
 export type ProjectItem = {
   title: string;
   description: string;
@@ -49,21 +55,19 @@ export type ZoneData = {
   lore: string;
   position: [number, number, number];
   color: string;
+  shape: CrystalShape;
   content: ZoneContent;
 };
 
 export const ZONES: ZoneData[] = [
   {
     id: "the-forge",
-
     name: "The Forge",
-
     lore:
       "A molten chamber where forgotten constructs are reborn through code and creativity.",
-
     position: [6, 0, 4],
-
     color: "#f59e0b",
+    shape: "torusKnot",
 
     content: {
       type: "forge",
@@ -92,15 +96,12 @@ export const ZONES: ZoneData[] = [
 
   {
     id: "the-archives",
-
     name: "The Archives",
-
     lore:
       "A sealed repository of technical knowledge preserved within crystalline memory structures.",
-
     position: [-5, 0, 8],
-
     color: "#06b6d4",
+    shape: "icosahedron",
 
     content: {
       type: "archives",
@@ -108,7 +109,6 @@ export const ZONES: ZoneData[] = [
       categories: [
         {
           category: "Frontend",
-
           skills: [
             "React",
             "Next.js",
@@ -120,7 +120,6 @@ export const ZONES: ZoneData[] = [
 
         {
           category: "Backend",
-
           skills: [
             "Node.js",
             "Express",
@@ -158,21 +157,18 @@ export const ZONES: ZoneData[] = [
 
   {
     id: "the-oracle",
-
     name: "The Oracle",
-
     lore:
       "An ancient intelligence that preserves memories, ambitions, and fragments of the creator's journey.",
-
     position: [-8, 0, -6],
-
     color: "#8b5cf6",
+    shape: "dodecahedron",
 
     content: {
       type: "oracle",
 
       bio:
-        "I'm Soham More, a Computer Science student focused on building immersive digital experiences, scalable full-stack systems, and creative interactive interfaces. I enjoy blending engineering with storytelling through game-inspired web experiences and visually rich applications.",
+        "I'm Soham More, a Computer Science student focused on building immersive digital experiences, scalable full-stack systems, and creative interactive interfaces.",
 
       resume:
         "/resume.pdf",
@@ -181,15 +177,12 @@ export const ZONES: ZoneData[] = [
 
   {
     id: "the-gateway",
-
     name: "The Gateway",
-
     lore:
       "A dimensional nexus connecting distant worlds, collaborators, and future opportunities.",
-
     position: [9, 0, -8],
-
     color: "#ec4899",
+    shape: "torus",
 
     content: {
       type: "gateway",
@@ -197,28 +190,24 @@ export const ZONES: ZoneData[] = [
       contacts: [
         {
           label: "GitHub",
-
           url:
             "https://github.com/SM33-07",
         },
 
         {
           label: "LinkedIn",
-
           url:
             "https://linkedin.com/in/soham-more-muj",
         },
 
         {
           label: "Email",
-
           url:
             "mailto:sohammore3312@gmail.com",
         },
 
         {
           label: "X / Twitter",
-
           url:
             "https://x.com/sohammore3312",
         },

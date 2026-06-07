@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -38,25 +39,29 @@ export default function Scene() {
         color="#c084fc"
       />
 
-      <WorldGround />
+      <Suspense fallback={null}>
+        <WorldGround />
 
-      {/* Zone Crystals */}
-      {ZONES.map((zone) => (
-        <AetherCrystal
-          key={zone.id}
-          position={[
-            zone.position[0],
-            zone.position[1],
-            zone.position[2],
-          ]}
-          color={zone.color}
+        {/* Zone Crystals */}
+        {ZONES.map((zone) => (
+          <AetherCrystal
+            key={zone.id}
+            id={zone.id}
+            position={[
+              zone.position[0],
+              zone.position[1],
+              zone.position[2],
+            ]}
+            color={zone.color}
+            shape={zone.shape}
+          />
+        ))}
+
+        {/* Player */}
+        <Avatar
+          zones={zoneTriggers}
         />
-      ))}
-
-      {/* Player */}
-      <Avatar
-        zones={zoneTriggers}
-      />
+      </Suspense>
     </Canvas>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { useEffect, useRef, useState } from 'react'
@@ -6,7 +7,7 @@ import { useGameStore } from '@/store/useGameStore'
 const RANKS = ['Wanderer', 'Seeker', 'Arcanist', 'Voidwalker', 'Aethermage']
 
 export default function GameHUD() {
-  const { level, currentXP, xpToNextLevel, currentZone } = useGameStore()
+  const { level, currentXP, xpToNextLevel, currentZone, resetGame } = useGameStore()
 
   const xpPercent = (currentXP / xpToNextLevel) * 100
   const filledSegments = Math.floor(xpPercent / 10)
@@ -54,7 +55,7 @@ export default function GameHUD() {
       return
     }
 
-    let steps = ['— scanning —', '…locking…', currentZone]
+    const steps = ['— scanning —', '…locking…', currentZone]
     let i = 0
 
     const interval = setInterval(() => {
@@ -65,6 +66,20 @@ export default function GameHUD() {
 
     return () => clearInterval(interval)
   }, [currentZone])
+
+  // --- Dev mode: Reset button toggled via Ctrl+Shift+R ---
+  const [showReset, setShowReset] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'r') {
+        e.preventDefault()
+        setShowReset((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   return (
     <div
@@ -136,6 +151,18 @@ export default function GameHUD() {
           </div>
         ))}
       </div>
+
+      {/* Reset Button */}
+      {showReset && (
+        <button
+          onClick={() => {
+            resetGame();
+          }}
+          className="pointer-events-auto mt-3 w-full text-center text-[10px] tracking-wider text-purple-400/80 hover:text-purple-300 border border-purple-500/25 hover:border-purple-500/50 bg-purple-950/20 hover:bg-purple-950/40 rounded py-1.5 transition-all cursor-pointer font-mono"
+        >
+          [ RESET SYSTEM PROGRESS ]
+        </button>
+      )}
 
       {/* Styles */}
       <style jsx>{`

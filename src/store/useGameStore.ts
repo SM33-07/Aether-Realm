@@ -22,6 +22,8 @@ interface GameStore extends GameState {
   setCurrentZone: (
     zoneId: string | null
   ) => void;
+
+  resetGame: () => void;
 }
 
 export const useGameStore =
@@ -37,6 +39,16 @@ export const useGameStore =
         visitedZones: [],
 
         currentZone: null,
+
+        resetGame: () => {
+          set({
+            level: 1,
+            currentXP: 0,
+            xpToNextLevel: 100,
+            visitedZones: [],
+            currentZone: null,
+          });
+        },
 
         gainXP: (
           amount: number
