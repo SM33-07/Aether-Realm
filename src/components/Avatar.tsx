@@ -17,6 +17,7 @@ import {
 import { useFrame } from "@react-three/fiber";
 
 import { useGameStore } from "@/store/useGameStore";
+import { ZONES } from "@/data/zones";
 
 import {
   useKeyboardMovement,
@@ -428,7 +429,7 @@ export default function Avatar({
     <>
       {/* Avatar Group */}
       <group ref={groupRef}>
-        {/* Ground Ring */}
+        {/* Ground Ring — dynamically matches last visited zone color */}
         <mesh
           ref={ringRef}
           position={[0, 0.01, 0]}
@@ -443,9 +444,32 @@ export default function Avatar({
           />
 
           <meshBasicMaterial
-            color="#9333ea"
+            color={
+              ZONES.find(
+                (z) => z.id === visitedZones[visitedZones.length - 1]
+              )?.color || "#9333ea"
+            }
           />
         </mesh>
+
+        {/* Dynamic Zone Color Particle Blocks around Avatar */}
+        {visitedZones.map((zoneId, idx) => {
+          const zData = ZONES.find((z) => z.id === zoneId);
+          if (!zData) return null;
+
+          return (
+            <Sparkles
+              key={zoneId}
+              count={22}
+              scale={[1.4 + idx * 0.15, 1.4 + idx * 0.15, 0.4]}
+              size={2.2}
+              speed={1.6}
+              opacity={0.65}
+              color={zData.color}
+              position={[0, 1.0, 0]}
+            />
+          );
+        })}
 
         {/* Billboard (sprite always faces camera) */}
         <Billboard>
