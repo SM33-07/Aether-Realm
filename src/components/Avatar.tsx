@@ -428,7 +428,7 @@ export default function Avatar({
     <>
       {/* Avatar Group */}
       <group ref={groupRef}>
-        {/* Ground Ring */}
+        {/* Ground Shadow Ring (Subtle & Small) */}
         <mesh
           ref={ringRef}
           position={[0, 0.01, 0]}
@@ -439,11 +439,13 @@ export default function Avatar({
           ]}
         >
           <ringGeometry
-            args={[0.5, 0.7, 32]}
+            args={[0.2, 0.38, 32]}
           />
 
           <meshBasicMaterial
             color="#9333ea"
+            transparent
+            opacity={0.25}
           />
         </mesh>
 
@@ -586,15 +588,15 @@ export default function Avatar({
 
           {hasArchives && (
             <Sparkles
-              count={30}
+              count={15}
               scale={[
-                1.6,
-                1.6,
-                1.6,
+                1.2,
+                1.2,
+                1.2,
               ]}
-              size={1.5}
-              speed={1.8}
-              opacity={0.7}
+              size={1.2}
+              speed={1.2}
+              opacity={0.4}
               color="#06b6d4"
               position={[
                 0,
@@ -611,46 +613,17 @@ export default function Avatar({
 
           {hasOracle && (
             <group>
-              <mesh
-                ref={auraRef}
-                position={[
-                  0,
-                  1,
-                  -0.05,
-                ]}
-              >
-                <ringGeometry
-                  args={[
-                    0.7,
-                    0.95,
-                    32,
-                  ]}
-                />
-
-                <meshBasicMaterial
-                  color="#8b5cf6"
-                  transparent
-                  opacity={0.08}
-                  blending={
-                    THREE.AdditiveBlending
-                  }
-                  side={
-                    THREE.DoubleSide
-                  }
-                />
-              </mesh>
-
               {hasThreeZones && (
                 <Sparkles
-                  count={80}
+                  count={20}
                   scale={[
-                    1.3,
-                    1.3,
-                    0.3,
+                    1.0,
+                    1.0,
+                    0.2,
                   ]}
-                  size={2.8}
-                  speed={2.2}
-                  opacity={0.85}
+                  size={1.8}
+                  speed={1.2}
+                  opacity={0.4}
                   color="#c084fc"
                   position={[
                     0,
@@ -664,31 +637,19 @@ export default function Avatar({
 
           {/* =========================
             GATEWAY
-            Arcane Energy Halo & Wings
+            Subtle Arcane Motes
         ========================== */}
 
           {hasGateway && (
-            <group position={[0, 1.0, -0.05]}>
-              <mesh ref={capeRef}>
-                <torusGeometry args={[0.9, 0.03, 16, 32]} />
-                <meshStandardMaterial
-                  color="#ec4899"
-                  emissive="#ec4899"
-                  emissiveIntensity={2.5}
-                  transparent
-                  opacity={0.85}
-                />
-              </mesh>
-              <Sparkles
-                count={40}
-                scale={[1.8, 1.8, 0.4]}
-                size={2.5}
-                speed={2.5}
-                opacity={0.9}
-                color="#ec4899"
-                position={[0, 0, 0]}
-              />
-            </group>
+            <Sparkles
+              count={12}
+              scale={[1.2, 1.2, 0.3]}
+              size={1.5}
+              speed={1.5}
+              opacity={0.4}
+              color="#ec4899"
+              position={[0, 1.0, 0]}
+            />
           )}
         </Billboard>
         {/* ======================================

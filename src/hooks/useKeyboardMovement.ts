@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGameStore } from "@/store/useGameStore";
 
-const MOVE_SPEED = 0.08;
+const MOVE_SPEED = 0.05;
 
 export type Zone = {
   id: string;
