@@ -10,6 +10,7 @@ import ZoneDiscovery from "@/components/ZoneDiscovery";
 import CutsceneOverlay from "@/components/CutsceneOverlay";
 import ZoneTagsOverlay from "@/components/ZoneTagsOverlay";
 import ControlsPalette from "@/components/ControlsPalette";
+import UnlockNotification from "@/components/UnlockNotification";
 import ZonePanel from "@/components/ZonePanel";
 import { useGameStore } from "@/store/useGameStore";
 
@@ -36,6 +37,7 @@ export default function Page() {
           <HeaderGuide />
           <GameHUD />
           <ControlsPalette />
+          <UnlockNotification />
           <InteractionPrompt />
           <CutsceneOverlay />
           <ZoneTagsOverlay />

@@ -428,7 +428,7 @@ export default function Avatar({
     <>
       {/* Avatar Group */}
       <group ref={groupRef}>
-        {/* Dark Ground Ring under Avatar */}
+        {/* Ground Ring */}
         <mesh
           ref={ringRef}
           position={[0, 0.01, 0]}
@@ -443,9 +443,7 @@ export default function Avatar({
           />
 
           <meshBasicMaterial
-            color="#581c87"
-            transparent
-            opacity={0.65}
+            color="#9333ea"
           />
         </mesh>
 
