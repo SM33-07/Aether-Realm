@@ -5,63 +5,65 @@ import { Sparkles } from "@react-three/drei";
 
 export default function WorldParticles() {
   const visitedZones = useGameStore((s) => s.visitedZones);
-  const count = visitedZones.length;
 
-  if (count === 0) return null;
+  const hasForge = visitedZones.includes("the-forge");
+  const hasArchives = visitedZones.includes("the-archives");
+  const hasOracle = visitedZones.includes("the-oracle");
+  const hasGateway = visitedZones.includes("the-gateway");
 
   return (
     <group>
-      {/* 1 Zone: Forge Embers */}
-      {count >= 1 && (
-        <Sparkles
-          count={18}
-          scale={[14, 5, 14]}
-          size={1.8}
-          speed={0.6}
-          opacity={0.25}
-          color="#f59e0b"
-          position={[6, 2, 4]}
-        />
-      )}
+      {/* ===================================================
+          1. THE FORGE — Amber Gold Particle Block
+         =================================================== */}
+      <Sparkles
+        count={hasForge ? 75 : 15}
+        scale={hasForge ? [10, 6, 10] : [4, 3, 4]}
+        size={hasForge ? 3.5 : 1.8}
+        speed={hasForge ? 1.2 : 0.5}
+        opacity={hasForge ? 0.65 : 0.2}
+        color="#f59e0b"
+        position={[6, 2, 4]}
+      />
 
-      {/* 2 Zones: Knowledge Cyan Motes */}
-      {count >= 2 && (
-        <Sparkles
-          count={20}
-          scale={[14, 5, 14]}
-          size={1.6}
-          speed={0.5}
-          opacity={0.25}
-          color="#06b6d4"
-          position={[-5, 2, 8]}
-        />
-      )}
+      {/* ===================================================
+          2. THE ARCHIVES — Arcane Cyan Particle Block
+         =================================================== */}
+      <Sparkles
+        count={hasArchives ? 75 : 15}
+        scale={hasArchives ? [10, 6, 10] : [4, 3, 4]}
+        size={hasArchives ? 3.5 : 1.8}
+        speed={hasArchives ? 1.2 : 0.5}
+        opacity={hasArchives ? 0.65 : 0.2}
+        color="#06b6d4"
+        position={[-5, 2, 8]}
+      />
 
-      {/* 3 Zones: Oracle Void Particles */}
-      {count >= 3 && (
-        <Sparkles
-          count={22}
-          scale={[16, 6, 16]}
-          size={2.0}
-          speed={0.7}
-          opacity={0.3}
-          color="#a855f7"
-          position={[-8, 2, -6]}
-        />
-      )}
+      {/* ===================================================
+          3. THE ORACLE — Deep Void Violet Particle Block
+         =================================================== */}
+      <Sparkles
+        count={hasOracle ? 80 : 15}
+        scale={hasOracle ? [10, 6, 10] : [4, 3, 4]}
+        size={hasOracle ? 3.5 : 1.8}
+        speed={hasOracle ? 1.2 : 0.5}
+        opacity={hasOracle ? 0.65 : 0.2}
+        color="#8b5cf6"
+        position={[-8, 2, -6]}
+      />
 
-      {/* 4 Zones: Subtle Pink Stardust */}
-      {count >= 4 && (
-        <Sparkles
-          count={25}
-          scale={[18, 6, 18]}
-          size={1.8}
-          speed={0.6}
-          opacity={0.2}
-          color="#ec4899"
-          position={[0, 3, 0]}
-        />
-      )}
+      {/* ===================================================
+          4. THE GATEWAY — Celestial Pink Particle Block
+         =================================================== */}
+      <Sparkles
+        count={hasGateway ? 85 : 15}
+        scale={hasGateway ? [10, 6, 10] : [4, 3, 4]}
+        size={hasGateway ? 3.5 : 1.8}
+        speed={hasGateway ? 1.2 : 0.5}
+        opacity={hasGateway ? 0.65 : 0.2}
+        color="#ec4899"
+        position={[7, 2, -5]}
+      />
     </group>
   );
 }
