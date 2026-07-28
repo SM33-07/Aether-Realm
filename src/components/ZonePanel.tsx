@@ -15,11 +15,17 @@ export default function ZonePanel() {
     (s) => s.currentZone
   );
 
+  const dialogueActive = useGameStore(
+    (s) => s.dialogueActive
+  );
+
   const zone = ZONES.find(
     (z) => z.id === currentZone
   );
 
-  if (!zone) return null;
+  if (!zone || dialogueActive) {
+    return null;
+  }
 
   return (
     <div

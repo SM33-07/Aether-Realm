@@ -5,23 +5,28 @@ interface GameState {
   level: number;
   currentXP: number;
   xpToNextLevel: number;
-
-  // Array instead of Set
   visitedZones: string[];
-
   currentZone: string | null;
+
+  justLeveledUp: boolean;
+
+  dialogueActive: boolean;
 }
 
 interface GameStore extends GameState {
   gainXP: (amount: number) => void;
 
-  visitZone: (
-    zoneId: string
-  ) => void;
+  visitZone: (zoneId: string) => void;
 
   setCurrentZone: (
     zoneId: string | null
   ) => void;
+
+  setDialogueActive: (
+    value: boolean
+  ) => void;
+
+  resetLevelUpFlag: () => void;
 
   resetGame: () => void;
 }
@@ -40,15 +45,9 @@ export const useGameStore =
 
         currentZone: null,
 
-        resetGame: () => {
-          set({
-            level: 1,
-            currentXP: 0,
-            xpToNextLevel: 100,
-            visitedZones: [],
-            currentZone: null,
-          });
-        },
+        justLeveledUp: false,
+
+        dialogueActive: false,
 
         gainXP: (
           amount: number
@@ -79,8 +78,10 @@ export const useGameStore =
               xpToNextLevel:
                 Math.floor(
                   xpToNextLevel *
-                    1.5
+                  1.5
                 ),
+
+              justLeveledUp: true,
             });
           } else {
             set({
@@ -103,24 +104,22 @@ export const useGameStore =
               zoneId
             );
 
-          if (
-            !alreadyVisited
-          ) {
+          if (!alreadyVisited) {
             set({
               visitedZones: [
                 ...visitedZones,
                 zoneId,
               ],
 
-              currentZone:
-                zoneId,
+              currentZone: zoneId,
+
+              dialogueActive: true,
             });
 
             gainXP(30);
           } else {
             set({
-              currentZone:
-                zoneId,
+              currentZone: zoneId,
             });
           }
         },
@@ -134,6 +133,42 @@ export const useGameStore =
             currentZone:
               zoneId,
           }),
+
+        setDialogueActive: (
+          value: boolean
+        ) =>
+          set({
+            dialogueActive:
+              value,
+          }),
+
+        resetLevelUpFlag:
+          () =>
+            set({
+              justLeveledUp: false,
+            }),
+
+        resetGame: () => {
+          set({
+            level: 1,
+
+            currentXP: 0,
+
+            xpToNextLevel: 100,
+
+            visitedZones: [],
+
+            currentZone: null,
+
+            justLeveledUp: false,
+
+            dialogueActive: false,
+          });
+
+          localStorage.removeItem(
+            "aether-realm-save"
+          );
+        },
       }),
 
       {

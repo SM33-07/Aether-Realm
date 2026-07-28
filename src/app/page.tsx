@@ -2,6 +2,7 @@
 import dynamic from 'next/dynamic'
 import GameHUD from '@/components/GameHUD'
 import ZonePanel from '@/components/ZonePanel'
+import DialogueBox from '@/components/DialogueBox'
 
 const Scene = dynamic(
   () => import('@/components/Scene'),
@@ -13,6 +14,7 @@ export default function Page() {
     <main className="relative w-screen h-screen">
       <Scene />
       <GameHUD />
+      <DialogueBox />
       <ZonePanel />
     </main>
   )

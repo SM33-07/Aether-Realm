@@ -58,6 +58,9 @@ export default function Avatar({
   const capeRef =
     useRef<THREE.Mesh>(null);
 
+  const relicRef =
+    useRef<THREE.Group>(null);
+
   const directionRef = useRef<
     "up" | "down" | "left" | "right"
   >("down");
@@ -73,36 +76,90 @@ export default function Avatar({
   const prevTextureKeyRef =
     useRef("idle_down");
 
-  const tempEulerRef = useRef(new THREE.Euler());
-  const tempQuatRef = useRef(new THREE.Quaternion());
+  const tempEulerRef =
+    useRef(new THREE.Euler());
 
+  const tempQuatRef =
+    useRef(new THREE.Quaternion());
 
   const FPS = 10;
   const FRAME_COUNT = 8;
 
-  const visitedZones = useGameStore(
-    (state) => state.visitedZones
-  );
+  const visitedZones =
+    useGameStore(
+      (state) => state.visitedZones
+    );
 
-  const hasForge = visitedZones.includes("the-forge");
-  const hasArchives = visitedZones.includes("the-archives");
-  const hasOracle = visitedZones.includes("the-oracle");
-  const hasGateway = visitedZones.includes("the-gateway");
+  const justLeveledUp =
+    useGameStore(
+      (state) =>
+        state.justLeveledUp
+    );
 
-  const hasThreeZones = visitedZones.length >= 3;
+  const hasForge =
+    visitedZones.includes(
+      "the-forge"
+    );
 
-  const textures = useTexture(SPRITE_TEXTURES);
+  const hasArchives =
+    visitedZones.includes(
+      "the-archives"
+    );
+
+  const hasOracle =
+    visitedZones.includes(
+      "the-oracle"
+    );
+
+  const hasGateway =
+    visitedZones.includes(
+      "the-gateway"
+    );
+
+  const hasThreeZones =
+    visitedZones.length >= 3;
+
+  const textures =
+    useTexture(
+      SPRITE_TEXTURES
+    );
 
   useEffect(() => {
-    Object.values(textures).forEach((tex) => {
-      tex.repeat.set(1 / FRAME_COUNT, -1);
-      tex.offset.set(0, 1);
-      tex.magFilter = THREE.NearestFilter;
-      tex.minFilter = THREE.NearestFilter;
-      tex.flipY = false;
-      tex.needsUpdate = true;
-    });
+    Object.values(textures).forEach(
+      (tex) => {
+        tex.repeat.set(
+          1 / FRAME_COUNT,
+          -1
+        );
+
+        tex.offset.set(0, 1);
+
+        tex.magFilter =
+          THREE.NearestFilter;
+
+        tex.minFilter =
+          THREE.NearestFilter;
+
+        tex.flipY = false;
+
+        tex.needsUpdate = true;
+      }
+    );
   }, [textures]);
+
+  useEffect(() => {
+    if (!justLeveledUp) return;
+
+    const timer =
+      setTimeout(() => {
+        useGameStore
+          .getState()
+          .resetLevelUpFlag();
+      }, 1000);
+
+    return () =>
+      clearTimeout(timer);
+  }, [justLeveledUp]);
 
   useKeyboardMovement(
     groupRef,
@@ -133,16 +190,22 @@ export default function Avatar({
         ? `run_${directionRef.current}`
         : "idle_down";
 
-    if (textureKey !== prevTextureKeyRef.current) {
+    if (
+      textureKey !==
+      prevTextureKeyRef.current
+    ) {
       frameRef.current = 0;
       frameTimeRef.current = 0;
-      prevTextureKeyRef.current = textureKey;
+      prevTextureKeyRef.current =
+        textureKey;
     }
 
     const texture =
       textures[
       textureKey as keyof typeof textures
       ];
+
+    if (!texture) return;
 
     texture.offset.x =
       frameRef.current /
@@ -155,87 +218,210 @@ export default function Avatar({
         spriteMeshRef.current
           .material as THREE.MeshBasicMaterial;
 
-      material.map =
-        texture;
-
-      material.needsUpdate =
-        true;
+      material.map = texture;
+      material.needsUpdate = true;
     }
 
-    // Animate crown (Forge reward)
+    /* ---------- Crown ---------- */
+
     if (crownRef.current) {
-      crownRef.current.rotation.y += delta * 1.0;
+      crownRef.current.rotation.y +=
+        delta * 1;
+
+      crownRef.current.rotation.z =
+        Math.sin(
+          state.clock.elapsedTime *
+          1.4
+        ) * 0.05;
+
       crownRef.current.position.y =
-        1.98 + Math.sin(state.clock.elapsedTime * 3) * 0.015;
+        1.98 +
+        Math.sin(
+          state.clock.elapsedTime *
+          3
+        ) *
+        0.015;
     }
 
-    // Animate pulsing aura (Oracle reward)
+    /* ---------- Aura ---------- */
+
     if (auraRef.current) {
-      const pulse = 1.0 + Math.sin(state.clock.elapsedTime * 2.5) * 0.06;
-      auraRef.current.scale.set(pulse, pulse, pulse);
+      const pulse =
+        1 +
+        Math.sin(
+          state.clock.elapsedTime *
+          2.5
+        ) *
+        0.06;
+
+      auraRef.current.scale.set(
+        pulse,
+        pulse,
+        pulse
+      );
+
+      auraRef.current.rotation.z +=
+        delta * 0.4;
     }
 
-    // Animate cape (Gateway final form)
+    /* ---------- Cape ---------- */
+
     if (capeRef.current) {
-      const dir = directionRef.current;
+      const dir =
+        directionRef.current;
+
       let targetX = 0;
       let targetZ = -0.06;
-      let targetRotX = Math.PI / 12;
+      let targetRotX =
+        Math.PI / 12;
       let targetRotY = 0;
       let targetRotZ = 0;
 
       if (dir === "up") {
-        targetX = 0;
         targetZ = 0.06;
-        targetRotX = -Math.PI / 12;
+        targetRotX =
+          -Math.PI / 12;
         targetRotY = Math.PI;
-        targetRotZ = 0;
-      } else if (dir === "down") {
-        targetX = 0;
-        targetZ = -0.06;
-        targetRotX = Math.PI / 12;
-        targetRotY = 0;
-        targetRotZ = 0;
-      } else if (dir === "left") {
+      } else if (
+        dir === "left"
+      ) {
         targetX = -0.35;
-        targetZ = -0.06;
         targetRotX = 0;
-        targetRotY = Math.PI / 2;
-        targetRotZ = -Math.PI / 10;
-      } else if (dir === "right") {
+        targetRotY =
+          Math.PI / 2;
+        targetRotZ =
+          -Math.PI / 10;
+      } else if (
+        dir === "right"
+      ) {
         targetX = 0.35;
-        targetZ = -0.06;
         targetRotX = 0;
-        targetRotY = -Math.PI / 2;
-        targetRotZ = Math.PI / 10;
+        targetRotY =
+          -Math.PI / 2;
+        targetRotZ =
+          Math.PI / 10;
       }
 
-      // Add dynamic sway/wave animation on top
-      const waveX = Math.sin(state.clock.elapsedTime * 4.5) * 0.03;
-      const waveY = Math.sin(state.clock.elapsedTime * 2.0) * 0.02;
-      const waveZ = Math.sin(state.clock.elapsedTime * 3.0) * 0.015;
+      const waveX =
+        Math.sin(
+          state.clock.elapsedTime *
+          4.5
+        ) * 0.03;
 
-      const animatedRotX = targetRotX + waveX;
-      const animatedRotY = targetRotY + waveY;
-      const animatedRotZ = targetRotZ + waveZ;
+      const waveY =
+        Math.sin(
+          state.clock.elapsedTime *
+          2
+        ) * 0.02;
 
-      // Smoothly interpolate position
-      capeRef.current.position.x = THREE.MathUtils.lerp(capeRef.current.position.x, targetX, 0.15);
-      capeRef.current.position.z = THREE.MathUtils.lerp(capeRef.current.position.z, targetZ, 0.15);
-      capeRef.current.position.y = 0.5;
+      const waveZ =
+        Math.sin(
+          state.clock.elapsedTime *
+          3
+        ) * 0.015;
 
-      // Smoothly interpolate rotation using Euler/Quaternion refs
-      tempEulerRef.current.set(animatedRotX, animatedRotY, animatedRotZ, "YXZ");
-      tempQuatRef.current.setFromEuler(tempEulerRef.current);
-      capeRef.current.quaternion.slerp(tempQuatRef.current, 0.15);
+      tempEulerRef.current.set(
+        targetRotX + waveX,
+        targetRotY + waveY,
+        targetRotZ + waveZ,
+        "YXZ"
+      );
+
+      tempQuatRef.current.setFromEuler(
+        tempEulerRef.current
+      );
+
+      capeRef.current.position.x =
+        THREE.MathUtils.lerp(
+          capeRef.current.position.x,
+          targetX,
+          0.15
+        );
+
+      capeRef.current.position.z =
+        THREE.MathUtils.lerp(
+          capeRef.current.position.z,
+          targetZ,
+          0.15
+        );
+
+      capeRef.current.position.y =
+        0.5;
+
+      capeRef.current.scale.y =
+        1 +
+        Math.sin(
+          state.clock.elapsedTime *
+          4
+        ) *
+        0.03;
+
+      capeRef.current.quaternion.slerp(
+        tempQuatRef.current,
+        0.15
+      );
+    }
+
+    /* ---------- Orbiting Relic ---------- */
+
+    if (relicRef.current) {
+      const angle =
+        state.clock.elapsedTime *
+        1.5;
+
+      const radius = 0.6;
+
+      const targetX =
+        Math.cos(angle) *
+        radius;
+
+      const targetZ =
+        Math.sin(angle) *
+        radius;
+
+      const targetY =
+        1 +
+        Math.sin(
+          angle * 2
+        ) *
+        0.1;
+
+      relicRef.current.position.x =
+        THREE.MathUtils.lerp(
+          relicRef.current.position.x,
+          targetX,
+          0.15
+        );
+
+      relicRef.current.position.y =
+        THREE.MathUtils.lerp(
+          relicRef.current.position.y,
+          targetY,
+          0.15
+        );
+
+      relicRef.current.position.z =
+        THREE.MathUtils.lerp(
+          relicRef.current.position.z,
+          targetZ,
+          0.15
+        );
+
+      relicRef.current.rotation.x +=
+        delta * 1.2;
+
+      relicRef.current.rotation.y +=
+        delta * 2.5;
+
+      relicRef.current.rotation.z +=
+        delta * 0.8;
     }
   });
-
   return (
     <>
       {/* Avatar Group */}
       <group ref={groupRef}>
-        {/* Ground Ring - Lying flat on ground relative to player center */}
+        {/* Ground Ring */}
         <mesh
           ref={ringRef}
           position={[0, 0.01, 0]}
@@ -248,14 +434,15 @@ export default function Avatar({
           <ringGeometry
             args={[0.5, 0.7, 32]}
           />
+
           <meshBasicMaterial
             color="#9333ea"
           />
         </mesh>
 
-        {/* Billboard forces character sprite and aligned effects to face the screen */}
+        {/* Billboard (sprite always faces camera) */}
         <Billboard>
-          {/* Sprite Mesh */}
+          {/* Sprite */}
           <mesh
             ref={spriteMeshRef}
             position={[0, 1.0, 0]}
@@ -263,6 +450,7 @@ export default function Avatar({
             <planeGeometry
               args={[2.0, 1.8]}
             />
+
             <meshBasicMaterial
               map={textures.idle_down}
               transparent
@@ -271,101 +459,308 @@ export default function Avatar({
             />
           </mesh>
 
-          {/* Forge: Crown (glowing orange) */}
+          {/* =========================
+            FORGE EVOLUTION
+            Floating Crown
+        ========================== */}
+
           {hasForge && (
-            <group ref={crownRef} position={[0, 1.98, 0.02]}>
-              {/* Crown Base */}
-              <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                <torusGeometry args={[0.22, 0.03, 8, 24]} />
+            <group
+              ref={crownRef}
+              position={[
+                0,
+                1.98,
+                0.02,
+              ]}
+            >
+              {/* Crown Ring */}
+              <mesh
+                rotation={[
+                  Math.PI / 2,
+                  0,
+                  0,
+                ]}
+              >
+                <torusGeometry
+                  args={[
+                    0.22,
+                    0.03,
+                    8,
+                    24,
+                  ]}
+                />
+
                 <meshStandardMaterial
                   color="#f59e0b"
                   emissive="#f59e0b"
                   emissiveIntensity={1.5}
                 />
               </mesh>
+
               {/* Crown Spikes */}
-              {Array.from({ length: 5 }).map((_, index) => {
-                const angle = (index / 5) * Math.PI * 2;
-                const x = Math.cos(angle) * 0.22;
-                const z = Math.sin(angle) * 0.22;
+
+              {Array.from({
+                length: 5,
+              }).map((_, index) => {
+                const angle =
+                  (index / 5) *
+                  Math.PI *
+                  2;
+
+                const x =
+                  Math.cos(angle) *
+                  0.22;
+
+                const z =
+                  Math.sin(angle) *
+                  0.22;
+
                 return (
-                  <mesh key={index} position={[x, 0.08, z]}>
-                    <coneGeometry args={[0.04, 0.12, 4]} />
+                  <mesh
+                    key={index}
+                    position={[
+                      x,
+                      0.08,
+                      z,
+                    ]}
+                  >
+                    <coneGeometry
+                      args={[
+                        0.04,
+                        0.12,
+                        4,
+                      ]}
+                    />
+
                     <meshStandardMaterial
                       color="#f59e0b"
                       emissive="#f59e0b"
-                      emissiveIntensity={1.5}
+                      emissiveIntensity={
+                        1.5
+                      }
                     />
                   </mesh>
                 );
               })}
+
+              {/* Shoulder Crystal */}
+
+              <mesh
+                position={[
+                  0.28,
+                  -0.12,
+                  0,
+                ]}
+                rotation={[
+                  0,
+                  0,
+                  Math.PI / 6,
+                ]}
+              >
+                <octahedronGeometry
+                  args={[0.09, 0]}
+                />
+
+                <meshStandardMaterial
+                  color="#f59e0b"
+                  emissive="#f59e0b"
+                  emissiveIntensity={
+                    2
+                  }
+                />
+              </mesh>
             </group>
           )}
 
-          {/* Archives: Knowledge Effect (Cyan database particles) */}
+          {/* =========================
+            ARCHIVES
+            Knowledge Sparkles
+        ========================== */}
+
           {hasArchives && (
             <Sparkles
               count={30}
-              scale={[1.6, 1.6, 1.6]}
+              scale={[
+                1.6,
+                1.6,
+                1.6,
+              ]}
               size={1.5}
               speed={1.8}
               opacity={0.7}
               color="#06b6d4"
-              position={[0, 1.0, 0]}
+              position={[
+                0,
+                1,
+                0,
+              ]}
             />
           )}
 
-          {/* Oracle: Glowing Pulsing Aura with rich particles */}
+          {/* =========================
+            ORACLE
+            Void Aura
+        ========================== */}
+
           {hasOracle && (
             <group>
-              {/* Pulsing ring aura */}
-              <mesh ref={auraRef} position={[0, 1.0, -0.05]}>
-                <ringGeometry args={[0.7, 0.95, 32]} />
+              <mesh
+                ref={auraRef}
+                position={[
+                  0,
+                  1,
+                  -0.05,
+                ]}
+              >
+                <ringGeometry
+                  args={[
+                    0.7,
+                    0.95,
+                    32,
+                  ]}
+                />
+
                 <meshBasicMaterial
                   color="#8b5cf6"
                   transparent
                   opacity={0.08}
-                  blending={THREE.AdditiveBlending}
-                  side={THREE.DoubleSide}
+                  blending={
+                    THREE.AdditiveBlending
+                  }
+                  side={
+                    THREE.DoubleSide
+                  }
                 />
               </mesh>
 
-              {/* Orbiting / glowing aura sparkles - Only unlocked after visiting 3+ zones */}
               {hasThreeZones && (
                 <Sparkles
                   count={80}
-                  scale={[1.3, 1.3, 0.3]}
+                  scale={[
+                    1.3,
+                    1.3,
+                    0.3,
+                  ]}
                   size={2.8}
                   speed={2.2}
                   opacity={0.85}
                   color="#c084fc"
-                  position={[0, 1.0, -0.02]}
+                  position={[
+                    0,
+                    1,
+                    -0.02,
+                  ]}
                 />
               )}
             </group>
           )}
 
-          {/* Gateway: Final Form (Aether Cape) */}
+          {/* =========================
+            GATEWAY
+            Cape
+        ========================== */}
+
           {hasGateway && (
             <mesh
               ref={capeRef}
-              position={[0, 0.5, -0.06]}
-              rotation={[Math.PI / 12, 0, 0]}
+              position={[
+                0,
+                0.5,
+                -0.06,
+              ]}
+              rotation={[
+                Math.PI / 12,
+                0,
+                0,
+              ]}
             >
-              <cylinderGeometry args={[0.28, 0.55, 1.1, 16, 1, true, Math.PI * 1.2, Math.PI * 0.6]} />
+              <cylinderGeometry
+                args={[
+                  0.28,
+                  0.55,
+                  1.1,
+                  16,
+                  1,
+                  true,
+                  Math.PI * 1.2,
+                  Math.PI * 0.6,
+                ]}
+              />
+
               <meshStandardMaterial
                 color="#7f1d1d"
                 emissive="#7f1d1d"
                 emissiveIntensity={1.2}
                 transparent
                 opacity={0.5}
-                side={THREE.DoubleSide}
+                side={
+                  THREE.DoubleSide
+                }
                 roughness={0.2}
                 metalness={0.5}
               />
             </mesh>
           )}
         </Billboard>
+        {/* ======================================
+          ARCHIVES EVOLUTION
+          Orbiting Relic (World Space)
+      ======================================= */}
+
+        {hasArchives && (
+          <group ref={relicRef}>
+            <mesh>
+              <octahedronGeometry
+                args={[0.08, 0]}
+              />
+
+              <meshStandardMaterial
+                color="#06b6d4"
+                emissive="#06b6d4"
+                emissiveIntensity={1.2}
+                metalness={0.8}
+                roughness={0.15}
+              />
+            </mesh>
+
+            <pointLight
+              color="#06b6d4"
+              intensity={0.5}
+              distance={1.5}
+            />
+
+            <Sparkles
+              count={10}
+              scale={0.35}
+              size={1}
+              speed={1}
+              color="#06b6d4"
+            />
+          </group>
+        )}
+
+        {/* ======================================
+          LEVEL UP VFX
+      ======================================= */}
+
+        {justLeveledUp && (
+          <>
+            <Sparkles
+              count={150}
+              scale={3}
+              size={4}
+              speed={5}
+              opacity={1}
+              color="#f59e0b"
+            />
+
+            <pointLight
+              color="#f59e0b"
+              intensity={4}
+              distance={6}
+            />
+          </>
+        )}
       </group>
     </>
   );
