@@ -455,42 +455,44 @@ export default function Avatar({
         {/* Billboard (sprite & vertical aura always face camera) */}
         <Billboard>
           {/* ======================================
-              DARK AURA RING (Standing upright behind avatar, matching reference image)
+              DARK AURA RING (Standing upright behind avatar — unlocks after visiting The Oracle)
           ====================================== */}
-          <group position={[0, 1.0, -0.05]}>
-            {/* Dark Vertical Void Ring Body */}
-            <mesh ref={auraRef}>
-              <ringGeometry args={[0.9, 1.22, 48]} />
-              <meshBasicMaterial
-                color="#090518"
-                side={THREE.DoubleSide}
-                transparent
-                opacity={0.92}
-              />
-            </mesh>
+          {hasOracle && (
+            <group position={[0, 1.0, -0.05]}>
+              {/* Dark Vertical Void Ring Body */}
+              <mesh ref={auraRef}>
+                <ringGeometry args={[0.9, 1.22, 48]} />
+                <meshBasicMaterial
+                  color="#090518"
+                  side={THREE.DoubleSide}
+                  transparent
+                  opacity={0.92}
+                />
+              </mesh>
 
-            {/* Glowing Purple Outer Rim Ring */}
-            <mesh>
-              <ringGeometry args={[1.2, 1.26, 48]} />
-              <meshBasicMaterial
-                color="#a855f7"
-                side={THREE.DoubleSide}
-                transparent
-                opacity={0.85}
-              />
-            </mesh>
+              {/* Glowing Purple Outer Rim Ring */}
+              <mesh>
+                <ringGeometry args={[1.2, 1.26, 48]} />
+                <meshBasicMaterial
+                  color="#a855f7"
+                  side={THREE.DoubleSide}
+                  transparent
+                  opacity={0.85}
+                />
+              </mesh>
 
-            {/* Inner Floating Star Motes */}
-            <Sparkles
-              count={50}
-              scale={[1.8, 1.8, 0.3]}
-              size={2.2}
-              speed={1.5}
-              opacity={0.75}
-              color="#c084fc"
-              position={[0, 0, 0]}
-            />
-          </group>
+              {/* Inner Floating Star Motes */}
+              <Sparkles
+                count={50}
+                scale={[1.8, 1.8, 0.3]}
+                size={2.2}
+                speed={1.5}
+                opacity={0.75}
+                color="#c084fc"
+                position={[0, 0, 0]}
+              />
+            </group>
+          )}
 
           {/* Sprite */}
           <mesh

@@ -50,7 +50,7 @@ export default function UnlockNotification() {
   return (
     <div
       style={{ animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
-      className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none select-none"
+      className="fixed top-20 left-1/2 -translate-x-1/2 z-[110] pointer-events-none select-none max-w-md w-[90vw]"
     >
       <div
         className="flex items-center gap-3 px-5 py-3 rounded-xl bg-[#09090f]/95 border backdrop-blur-xl shadow-2xl font-mono text-xs text-white"
