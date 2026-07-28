@@ -428,7 +428,7 @@ export default function Avatar({
     <>
       {/* Avatar Group */}
       <group ref={groupRef}>
-        {/* Ground Shadow Ring (Subtle & Small) */}
+        {/* Dark Ground Ring under Avatar */}
         <mesh
           ref={ringRef}
           position={[0, 0.01, 0]}
@@ -439,13 +439,13 @@ export default function Avatar({
           ]}
         >
           <ringGeometry
-            args={[0.2, 0.38, 32]}
+            args={[0.5, 0.7, 32]}
           />
 
           <meshBasicMaterial
-            color="#9333ea"
+            color="#581c87"
             transparent
-            opacity={0.25}
+            opacity={0.65}
           />
         </mesh>
 
