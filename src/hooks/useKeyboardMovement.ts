@@ -3,9 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGameStore } from "@/store/useGameStore";
 
-const MOVE_SPEED = 0.025;
-
-type KeysPressed = Record<string, boolean>;
+const MOVE_SPEED = 0.08;
 
 export type Zone = {
   id: string;
@@ -16,26 +14,27 @@ export function useKeyboardMovement(
   groupRef: React.RefObject<THREE.Group | null>,
   ringRef?: React.RefObject<THREE.Mesh | null>,
   zones?: Zone[],
-  directionRef?: React.MutableRefObject<"up" | "down" | "left" | "right">,
+  directionRef?: React.MutableRefObject<"down" | "up" | "left" | "right">,
   isMovingRef?: React.MutableRefObject<boolean>
 ) {
-  const keysPressed = useRef<KeysPressed>({});
+  const keysPressed = useRef<Record<string, boolean>>({});
+  const stepDistRef = useRef(0);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      keysPressed.current[event.code] = true;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      keysPressed.current[e.code] = true;
 
-      if (event.code === "KeyE") {
+      // Press 'E' to interact with near zone
+      if (e.code === "KeyE" || e.code === "KeyE") {
         const state = useGameStore.getState();
         if (state.nearZone && state.interactionPhase === "idle") {
-          event.preventDefault();
-          state.startZoneInteraction();
+          state.interactWithZone();
         }
       }
     };
 
-    const handleKeyUp = (event: KeyboardEvent) => {
-      keysPressed.current[event.code] = false;
+    const handleKeyUp = (e: KeyboardEvent) => {
+      keysPressed.current[e.code] = false;
     };
 
     const handleBlur = () => {
@@ -59,6 +58,8 @@ export function useKeyboardMovement(
     const state = useGameStore.getState();
     const movementLocked =
       !state.gameStarted ||
+      state.dialogueActive ||
+      state.cutsceneActive ||
       state.interactionPhase === "cutscene" ||
       state.interactionPhase === "dialogue";
 
@@ -97,6 +98,15 @@ export function useKeyboardMovement(
     if (right) {
       position.x += speed;
       position.z -= speed;
+    }
+
+    // Award 5 XP for each movement step interval
+    if (moving) {
+      stepDistRef.current += speed;
+      if (stepDistRef.current >= 0.7) {
+        stepDistRef.current = 0;
+        state.gainXP(5);
+      }
     }
 
     const BOUND = 9.8;

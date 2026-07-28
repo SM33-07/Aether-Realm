@@ -455,7 +455,7 @@ export default function Avatar({
             position={[0, 1.0, 0]}
           >
             <planeGeometry
-              args={[2.0, 1.8]}
+              args={[2.4, 2.16]}
             />
 
             <meshBasicMaterial
@@ -664,49 +664,31 @@ export default function Avatar({
 
           {/* =========================
             GATEWAY
-            Cape
+            Arcane Energy Halo & Wings
         ========================== */}
 
           {hasGateway && (
-            <mesh
-              ref={capeRef}
-              position={[
-                0,
-                0.5,
-                -0.06,
-              ]}
-              rotation={[
-                Math.PI / 12,
-                0,
-                0,
-              ]}
-            >
-              <cylinderGeometry
-                args={[
-                  0.28,
-                  0.55,
-                  1.1,
-                  16,
-                  1,
-                  true,
-                  Math.PI * 1.2,
-                  Math.PI * 0.6,
-                ]}
+            <group position={[0, 1.0, -0.05]}>
+              <mesh ref={capeRef}>
+                <torusGeometry args={[0.9, 0.03, 16, 32]} />
+                <meshStandardMaterial
+                  color="#ec4899"
+                  emissive="#ec4899"
+                  emissiveIntensity={2.5}
+                  transparent
+                  opacity={0.85}
+                />
+              </mesh>
+              <Sparkles
+                count={40}
+                scale={[1.8, 1.8, 0.4]}
+                size={2.5}
+                speed={2.5}
+                opacity={0.9}
+                color="#ec4899"
+                position={[0, 0, 0]}
               />
-
-              <meshStandardMaterial
-                color="#7f1d1d"
-                emissive="#7f1d1d"
-                emissiveIntensity={1.2}
-                transparent
-                opacity={0.5}
-                side={
-                  THREE.DoubleSide
-                }
-                roughness={0.2}
-                metalness={0.5}
-              />
-            </mesh>
+            </group>
           )}
         </Billboard>
         {/* ======================================

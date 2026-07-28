@@ -130,7 +130,7 @@ export const useGameStore = create<GameStore>()(
           discoveredZone: null,
         });
 
-        if (firstVisit) get().gainXP(30);
+        if (firstVisit) get().gainXP(50);
       },
 
       completeDialogue: () => {
