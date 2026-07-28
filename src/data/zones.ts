@@ -20,6 +20,7 @@ export type SkillCategory = {
 export type ContactLink = {
   label: string;
   url: string;
+  icon?: string;
 };
 
 export type ForgeContent = {
@@ -64,7 +65,7 @@ export const ZONES: ZoneData[] = [
     id: "the-forge",
     name: "The Forge",
     lore:
-      "A molten chamber where forgotten constructs are reborn through code and creativity.",
+      "A molten chamber where concepts are transformed into full-stack software and interactive applications.",
     position: [6, 0, 4],
     color: "#f59e0b",
     shape: "torusKnot",
@@ -74,21 +75,45 @@ export const ZONES: ZoneData[] = [
 
       projects: [
         {
-          title:
-            "LearnIT Submission Portal",
-
+          title: "Code-E-Manipal Portal",
           description:
-            "Submission and evaluation portal built for handling project entries, workflow management, and streamlined event submissions.",
-
+            "Official project submission and evaluation portal built for student coding challenges and tech events. Features automated assignment tracking, real-time submission workflows, project evaluation, and interactive event dashboards.",
           tags: [
             "Next.js",
+            "React",
             "TypeScript",
+            "Tailwind CSS",
             "Supabase",
             "PostgreSQL",
           ],
-
-          github:
-            "https://github.com/SM33-07/LearnIT-SubmissionPortal",
+          github: "https://github.com/SM33-07/Code-E-Manipal_Portal",
+        },
+        {
+          title: "Operation Deadlight",
+          description:
+            "An intense tactical web application and interactive game system featuring real-time state management, custom animation pipelines, responsive keyboard controls, and high-performance game logic.",
+          tags: [
+            "JavaScript",
+            "React",
+            "Three.js",
+            "Tailwind CSS",
+            "Node.js",
+          ],
+          github: "https://github.com/SM33-07/Operation-Deadlight",
+        },
+        {
+          title: "CodeVault",
+          description:
+            "A secure developer snippet & asset management platform. Features syntax-highlighted code storage, tag-based categorization, instant search, and encrypted cloud synchronization.",
+          tags: [
+            "React",
+            "Next.js",
+            "TypeScript",
+            "Prisma",
+            "PostgreSQL",
+            "Tailwind CSS",
+          ],
+          github: "https://github.com/SM33-07/CodeVault",
         },
       ],
     },
@@ -98,7 +123,7 @@ export const ZONES: ZoneData[] = [
     id: "the-archives",
     name: "The Archives",
     lore:
-      "A sealed repository of technical knowledge preserved within crystalline memory structures.",
+      "A sealed repository of technical mastery preserved within crystalline memory structures.",
     position: [-5, 0, 8],
     color: "#06b6d4",
     shape: "icosahedron",
@@ -110,45 +135,51 @@ export const ZONES: ZoneData[] = [
         {
           category: "Frontend",
           skills: [
-            "React",
-            "Next.js",
-            "TypeScript",
+            "HTML5",
             "Tailwind CSS",
-            "Framer Motion",
+            "JavaScript",
+            "React",
+            "TypeScript",
+            "Next.js",
           ],
         },
-
         {
-          category: "Backend",
+          category: "Backend & ORM",
           skills: [
             "Node.js",
-            "Express",
-            "Supabase",
-            "PostgreSQL",
-            "REST APIs",
+            "Express.js",
+            "Prisma ORM",
           ],
         },
-
         {
-          category:
-            "3D & Creative Dev",
-
+          category: "Database",
+          skills: [
+            "PostgreSQL",
+            "Supabase",
+          ],
+        },
+        {
+          category: "Creative Dev & Animation",
           skills: [
             "Three.js",
             "React Three Fiber",
             "GSAP",
-            "Canvas API",
+            "Framer Motion",
           ],
         },
-
         {
-          category: "AI & ML",
-
+          category: "Tools & Deployment",
           skills: [
-            "OpenAI APIs",
+            "Vercel",
+            "Git & GitHub",
+            "VS Code",
+          ],
+        },
+        {
+          category: "Languages & Other",
+          skills: [
+            "C",
             "Prompt Engineering",
-            "Python",
-            "ML Fundamentals",
           ],
         },
       ],
@@ -168,10 +199,9 @@ export const ZONES: ZoneData[] = [
       type: "oracle",
 
       bio:
-        "I'm Soham More, a Computer Science student focused on building immersive digital experiences, scalable full-stack systems, and creative interactive interfaces.",
+        "I'm Soham More, a Full-Stack & Creative Web Developer studying Information Technology at Manipal University Jaipur (MUJ).\n\nDriven by the craft of building fast, visually striking, and intuitive web applications, I combine modern full-stack architectures (Next.js, Node.js, PostgreSQL, Prisma, Supabase) with immersive 3D animation systems (Three.js, React Three Fiber, GSAP, Framer Motion).\n\nFrom architecting official event platforms like the Code-E-Manipal Portal to engineering game mechanics and interactive WebGL worlds, I focus on writing clean, scalable code and delivering unforgettable user experiences. Always exploring cutting-edge web tech, creative developer tools, and AI-assisted pair engineering.",
 
-      resume:
-        "/resume.pdf",
+      resume: "/resume.pdf",
     },
   },
 
@@ -190,26 +220,19 @@ export const ZONES: ZoneData[] = [
       contacts: [
         {
           label: "GitHub",
-          url:
-            "https://github.com/SM33-07",
+          url: "https://github.com/SM33-07",
         },
-
         {
           label: "LinkedIn",
-          url:
-            "https://linkedin.com/in/soham-more-muj",
+          url: "https://linkedin.com/in/soham-more-muj",
         },
-
+        {
+          label: "X (Twitter)",
+          url: "https://x.com/sohammore3312",
+        },
         {
           label: "Email",
-          url:
-            "mailto:sohammore3312@gmail.com",
-        },
-
-        {
-          label: "X / Twitter",
-          url:
-            "https://x.com/sohammore3312",
+          url: "mailto:sohammore3312@gmail.com",
         },
       ],
     },
