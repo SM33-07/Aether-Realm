@@ -4,28 +4,28 @@ import * as THREE from "three";
 
 const TIME_PRESETS = {
   night: {
-    ambient: "#050318",
-    intensity: 0.05,
-    dirColor: "#1a0f3d",
-    dirIntensity: 0.2,
+    ambient: "#4c1d95",
+    intensity: 0.5,
+    dirColor: "#a855f7",
+    dirIntensity: 1.8,
   },
   morning: {
-    ambient: "#1a1040",
-    intensity: 0.35,
+    ambient: "#2e1065",
+    intensity: 0.55,
     dirColor: "#c084fc",
     dirIntensity: 2.5,
   },
   day: {
-    ambient: "#0d0824",
-    intensity: 0.4,
+    ambient: "#1e1b4b",
+    intensity: 0.6,
     dirColor: "#e0d0ff",
     dirIntensity: 3.0,
   },
   evening: {
-    ambient: "#1a0818",
-    intensity: 0.2,
+    ambient: "#312e81",
+    intensity: 0.5,
     dirColor: "#f59e0b",
-    dirIntensity: 1.8,
+    dirIntensity: 2.0,
   },
 };
 

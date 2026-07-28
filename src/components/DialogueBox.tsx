@@ -20,10 +20,10 @@ export default function DialogueBox() {
       (s) => s.dialogueActive
     )
 
-  const setDialogueActive =
+  const completeDialogue =
     useGameStore(
       (s) =>
-        s.setDialogueActive
+        s.completeDialogue
     )
 
   const [lineIndex, setLineIndex] =
@@ -31,6 +31,9 @@ export default function DialogueBox() {
 
   const [displayed, setDisplayed] =
     useState('')
+
+  const [isTyping, setIsTyping] =
+    useState(false)
 
   const charIndexRef =
     useRef(0)
@@ -46,6 +49,7 @@ export default function DialogueBox() {
     setLineIndex(0)
     setDisplayed('')
     charIndexRef.current = 0
+    setIsTyping(false)
   }, [currentZone])
 
   useEffect(() => {
@@ -60,6 +64,7 @@ export default function DialogueBox() {
 
     charIndexRef.current = 0
     setDisplayed('')
+    setIsTyping(true)
 
     const interval =
       setInterval(() => {
@@ -79,11 +84,13 @@ export default function DialogueBox() {
           clearInterval(
             interval
           )
+          setIsTyping(false)
         }
       }, 28)
 
-    return () =>
+    return () => {
       clearInterval(interval)
+    }
   }, [
     lineIndex,
     keeper,
@@ -104,6 +111,7 @@ export default function DialogueBox() {
         setDisplayed(fullText)
         charIndexRef.current =
           fullText.length
+        setIsTyping(false)
         return
       }
 
@@ -115,7 +123,7 @@ export default function DialogueBox() {
           (prev) => prev + 1
         )
       } else {
-        setDialogueActive(false)
+        completeDialogue()
       }
     }
 
@@ -124,8 +132,8 @@ export default function DialogueBox() {
       e: KeyboardEvent
     ) => {
       if (
-        e.key === ' ' ||
-        e.key === 'Enter'
+        dialogueActive &&
+        (e.key === ' ' || e.key === 'Enter')
       ) {
         handleAdvance()
       }
@@ -145,6 +153,7 @@ export default function DialogueBox() {
     displayed,
     lineIndex,
     keeper,
+    dialogueActive,
   ])
 
   if (
@@ -156,16 +165,52 @@ export default function DialogueBox() {
   return (
     <div
       onClick={handleAdvance}
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[720px] max-w-[92vw] pointer-events-auto cursor-pointer z-50"
+      className="absolute bottom-6 left-1/2 w-[720px] max-w-[92vw] pointer-events-auto cursor-pointer z-50"
+      style={{
+        animation:
+          'dialogueEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      }}
     >
       <div
-        className="bg-[#09090f]/95 backdrop-blur-md border rounded-2xl p-6"
+        className="relative bg-[#09090f]/95 backdrop-blur-md border rounded-2xl pt-5 pb-6 px-8 overflow-hidden"
         style={{
           borderColor:
             keeper.color + '40',
+          boxShadow: `0 0 30px ${keeper.color}15, 0 0 60px ${keeper.color}08`,
         }}
       >
-        <div className="flex items-baseline gap-3 mb-3">
+        {/* Corner brackets */}
+        <div
+          className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2"
+          style={{
+            borderColor:
+              keeper.color + '60',
+          }}
+        />
+        <div
+          className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2"
+          style={{
+            borderColor:
+              keeper.color + '60',
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2"
+          style={{
+            borderColor:
+              keeper.color + '60',
+          }}
+        />
+        <div
+          className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2"
+          style={{
+            borderColor:
+              keeper.color + '60',
+          }}
+        />
+
+        {/* Header: Name + Title */}
+        <div className="flex items-baseline gap-3 mb-4">
           <h3
             className="text-lg font-bold"
             style={{
@@ -181,17 +226,41 @@ export default function DialogueBox() {
           </span>
         </div>
 
-        <p className="text-white/90 text-sm leading-relaxed min-h-[3rem]">
+        {/* Dialogue text with typewriter cursor */}
+        <p className="text-white/90 text-[15px] leading-loose min-h-[4.5rem]">
           {displayed}
+          {isTyping && (
+            <span
+              className="animate-blink ml-[1px]"
+              style={{
+                color:
+                  keeper.color,
+              }}
+            >
+              ▋
+            </span>
+          )}
         </p>
 
-        <div className="flex justify-end mt-3">
-          <span className="text-xs text-gray-500 font-mono animate-pulse">
-            ▶ Click or press
-            Space
+        {/* Footer hint */}
+        <div className="flex justify-end mt-4">
+          <span
+            className="text-[10px] tracking-[0.2em] uppercase font-mono"
+            style={{
+              color:
+                keeper.color + '80',
+            }}
+          >
+            SPACE{' '}
+            <span className="text-xs">
+              ▸
+            </span>{' '}
+            Continue
           </span>
         </div>
       </div>
     </div>
   )
 }
+
+

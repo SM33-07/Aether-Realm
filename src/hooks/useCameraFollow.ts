@@ -1,7 +1,9 @@
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useGameStore } from "@/store/useGameStore";
+import { ZONES } from "@/data/zones";
 
-const LERP_FACTOR = 0.05;
+const LERP_FACTOR = 0.08;
 
 export function useCameraFollow(
   groupRef: React.RefObject<THREE.Group | null>
@@ -10,38 +12,50 @@ export function useCameraFollow(
     if (!groupRef.current) return;
 
     const { camera } = state;
+    const orthCam = camera as THREE.OrthographicCamera;
 
-    const avatarX =
-      groupRef.current.position.x;
+    const gameState = useGameStore.getState();
+    const isFocus = gameState.cutsceneActive || gameState.dialogueActive;
+    const currentZoneData = ZONES.find((z) => z.id === gameState.currentZone);
 
-    const avatarZ =
-      groupRef.current.position.z;
+    // Target positions: focus on zone crystal during cutscene/dialogue, or follow avatar
+    let focusX = groupRef.current.position.x;
+    let focusZ = groupRef.current.position.z;
 
-    const targetX = avatarX + 10;
-    const targetZ = avatarZ + 10;
+    if (isFocus && currentZoneData) {
+      focusX = currentZoneData.position[0];
+      focusZ = currentZoneData.position[2];
+    }
 
-    camera.position.x =
-      THREE.MathUtils.lerp(
-        camera.position.x,
-        targetX,
-        LERP_FACTOR * delta * 60
-      );
+    if (isNaN(focusX) || isNaN(focusZ)) return;
 
-    camera.position.z =
-      THREE.MathUtils.lerp(
-        camera.position.z,
-        targetZ,
-        LERP_FACTOR * delta * 60
-      );
+    const targetX = focusX + 10;
+    const targetZ = focusZ + 10;
 
-    // Fixed height
+    const safeDelta = Math.min(delta, 0.05);
+    const alpha = Math.min(1, Math.max(0, LERP_FACTOR * safeDelta * 60));
+
+    // Smoothly lerp camera position
+    camera.position.x = THREE.MathUtils.lerp(
+      camera.position.x,
+      targetX,
+      alpha
+    );
+
+    camera.position.z = THREE.MathUtils.lerp(
+      camera.position.z,
+      targetZ,
+      alpha
+    );
+
     camera.position.y = 10;
 
-    // Keep looking at avatar
-    camera.lookAt(
-      avatarX,
-      0,
-      avatarZ
-    );
+    // Smoothly lerp camera zoom for cutscene depth
+    const targetZoom = isFocus ? 105 : 80;
+    orthCam.zoom = THREE.MathUtils.lerp(orthCam.zoom, targetZoom, alpha * 0.8);
+    orthCam.updateProjectionMatrix();
+
+    // Look at target focus point
+    camera.lookAt(focusX, 0, focusZ);
   });
 }

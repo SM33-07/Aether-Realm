@@ -68,29 +68,56 @@ export default function AetherCrystal({
   color = "#a855f7",
   shape,
 }: AetherCrystalProps) {
-  const groupRef =
-    useRef<THREE.Group>(null!);
+  const groupRef = useRef<THREE.Group>(null!);
+  const ringRef = useRef<THREE.Mesh>(null!);
 
   const isVisited = useGameStore((state) =>
     state.visitedZones.includes(id)
   );
 
-  useFrame((_, delta) => {
-    if (isVisited) {
-      groupRef.current.rotation.y +=
-        delta * 1.5;
+  const phaseOffset = id.length * 1.2;
+
+  useFrame(({ clock }, delta) => {
+    const time = clock.getElapsedTime();
+
+    if (groupRef.current) {
+      groupRef.current.position.y = 1 + Math.sin(time * 2 + phaseOffset) * 0.12;
+      groupRef.current.rotation.y += delta * (isVisited ? 1.5 : 0.5);
+      groupRef.current.rotation.x = Math.sin(time * 1.5) * 0.08;
+    }
+
+    if (ringRef.current && ringRef.current.material) {
+      const pulse = Math.sin(time * 3 + phaseOffset) * 0.5 + 0.5;
+      const mat = ringRef.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = (isVisited ? 0.35 : 0.15) + pulse * 0.25;
+      ringRef.current.scale.setScalar(1 + pulse * 0.2);
     }
   });
 
   return (
     <group position={position}>
+      {/* Ground Pulse Wave Ring */}
+      <mesh
+        ref={ringRef}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 0.02, 0]}
+      >
+        <ringGeometry args={[1.1, 1.3, 32]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.2}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
       {/* Glow */}
       <mesh position={[0, 1, 0]}>
         <sphereGeometry args={[1.4, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={isVisited ? 0.12 : 0.02}
+          opacity={isVisited ? 0.15 : 0.04}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
@@ -109,7 +136,7 @@ export default function AetherCrystal({
         />
       )}
 
-      {/* Rotating Geometry Container */}
+      {/* Floating & Rotating Geometry Container */}
       <group
         ref={groupRef}
         position={[0, 1, 0]}
@@ -123,7 +150,7 @@ export default function AetherCrystal({
           <meshStandardMaterial
             color={color}
             emissive={color}
-            emissiveIntensity={isVisited ? 0.8 : 0.1}
+            emissiveIntensity={isVisited ? 0.8 : 0.25}
             roughness={0.15}
             metalness={0.8}
           />
@@ -139,7 +166,7 @@ export default function AetherCrystal({
             color={color}
             wireframe
             transparent
-            opacity={isVisited ? 0.18 : 0.04}
+            opacity={isVisited ? 0.22 : 0.08}
           />
         </mesh>
       </group>

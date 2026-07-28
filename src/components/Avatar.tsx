@@ -190,6 +190,11 @@ export default function Avatar({
         ? `run_${directionRef.current}`
         : "idle_down";
 
+    const texture =
+      textures[
+      textureKey as keyof typeof textures
+      ];
+
     if (
       textureKey !==
       prevTextureKeyRef.current
@@ -198,12 +203,15 @@ export default function Avatar({
       frameTimeRef.current = 0;
       prevTextureKeyRef.current =
         textureKey;
-    }
 
-    const texture =
-      textures[
-      textureKey as keyof typeof textures
-      ];
+      if (spriteMeshRef.current && texture) {
+        const material =
+          spriteMeshRef.current
+            .material as THREE.MeshBasicMaterial;
+        material.map = texture;
+        material.needsUpdate = true;
+      }
+    }
 
     if (!texture) return;
 
@@ -211,15 +219,14 @@ export default function Avatar({
       frameRef.current /
       FRAME_COUNT;
 
-    if (
-      spriteMeshRef.current
-    ) {
-      const material =
-        spriteMeshRef.current
-          .material as THREE.MeshBasicMaterial;
-
-      material.map = texture;
-      material.needsUpdate = true;
+    // Idle breathing animation
+    if (spriteMeshRef.current) {
+      if (!isMovingRef.current) {
+        spriteMeshRef.current.position.y =
+          1.0 + Math.sin(state.clock.elapsedTime * 3) * 0.035;
+      } else {
+        spriteMeshRef.current.position.y = 1.0;
+      }
     }
 
     /* ---------- Crown ---------- */
