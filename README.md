@@ -1,37 +1,59 @@
 # Aether Realm — Developer Portfolio
 
-A developer portfolio built as a playable isometric RPG world. Instead of scrolling through sections, you walk a character through a 3D game world and explore zones to discover projects, skills, and contact info.
+A developer portfolio built as a playable isometric RPG world. Instead of scrolling through sections, you walk a character through a 3D game world, meet four Keepers who guard fragments of a shattered Void Crystal, and explore zones to discover projects, skills, and contact info.
 
-Built with Next.js, TypeScript, and React Three Fiber.
+Built with Next.js, TypeScript, React Three Fiber, and Zustand.
 
 ---
 
 ## Live Demo
 
-> Coming soon
+**[aether-realm-soham.vercel.app](https://aether-realm-soham.vercel.app/)**
+
+Press **Enter** at the intro screen to begin. Use **WASD** or **arrow keys** to move.
 
 ---
 
 ## What it is
 
-The world has four named zones spread across an isometric grid map. Your avatar starts at the center and you navigate using WASD or arrow keys. Walking into a zone triggers a content panel with real portfolio information, awards XP, and logs the event in the HUD.
+The world has four named zones spread across an isometric grid map. Each zone is guarded by a Keeper — a character with their own personality and dialogue who speaks to you before revealing their content. Walking into a zone triggers a cinematic dialogue sequence, then a content panel opens with real portfolio information. Exploring zones earns XP and visually evolves your character with new cosmetic effects — nothing is ever gated behind level or XP, every zone is reachable from the very first second.
 
-| Zone | Purpose | Lore |
-|---|---|---|
-| The Forge | Projects & builds | Ancient creation chamber where constructs were forged |
-| The Archives | Skills & tech stack | A forbidden repository of technical knowledge |
-| The Oracle | About & journey | An ancient sentient entity preserving memory fragments |
-| The Gateway | Contact & links | A dimensional portal connecting realms |
+| Zone | Keeper | Purpose | Unlocks |
+|---|---|---|---|
+| The Forge | **Kael**, Keeper of Creation | Projects & builds | Floating crown + shoulder crystal |
+| The Archives | **Elyra**, Guardian of Knowledge | Skills & tech stack | Orbiting relic + knowledge particles |
+| The Oracle | **The Oracle of the Void** | About & journey | Pulsing void aura |
+| The Gateway | **Nox**, Warden of Infinite Paths | Contact & links | Aether cape |
+
+The narrative frame: the Void Crystal shattered long ago and its Keepers entered an endless slumber. Your arrival awakens them one by one — they aren't teaching you, they're judging whether you're worthy of becoming the Realm's next Architect.
+
+---
+
+## Core systems
+
+**NPC Dialogue** — Each Keeper has multi-line arrival dialogue delivered through a typewriter text effect. Clicking mid-line instantly completes it; clicking again advances to the next line. First-time zone visits trigger dialogue before the content panel appears; return visits skip straight to the panel.
+
+**Evolution system** — Character progression is tied to *which* zones you've explored, not your level number. Visiting The Forge grants a floating crown, The Archives grants an orbiting relic that circles the character in true 3D space, The Oracle grants a pulsing aura, The Gateway grants an animated cape that reacts to movement direction. All four can be visible simultaneously.
+
+**Cinematic presentation** — Camera transitions, letterboxing, and world-space region titles anchor the experience closer to a game than a website. Dynamic waypoint trails help guide exploration across the map without forcing a fixed path.
+
+**XP & leveling** — Visiting a new zone awards XP with correct overflow handling on level-up (excess XP carries into the next level rather than resetting). Rank titles progress from Wanderer upward. A dedicated level-up VFX burst plays when you cross a threshold.
+
+**Day/night cycle** — World lighting shifts automatically based on the visitor's local system time.
+
+**Persistence** — Level, XP, and visited zones are saved to `localStorage` and survive a page refresh.
+
+**Reset** — Press `Ctrl+Shift+R` at any time to wipe saved progress and restart the journey from Wanderer.
 
 ---
 
 ## Tech stack
 
-- **Next.js 14** — App Router, TypeScript, file-based routing
+- **Next.js** — App Router, TypeScript, file-based routing
 - **React Three Fiber** — React renderer for Three.js
-- **@react-three/drei** — helpers: Billboard, Grid, OrbitControls
-- **Zustand** — global game state (XP, level, zones)
-- **Tailwind CSS** — HUD and panel styling
+- **@react-three/drei** — Billboard, Sparkles, texture loading helpers
+- **Zustand** — global game state (XP, level, visited zones, dialogue state) with `persist` middleware
+- **Tailwind CSS** — HUD, dialogue box, and panel styling
 - **Three.js** — 3D engine underneath R3F
 
 ---
@@ -41,66 +63,58 @@ The world has four named zones spread across an isometric grid map. Your avatar 
 ```
 src/
 ├── app/
-│   ├── page.tsx              # root page, composes scene + UI
+│   ├── page.tsx                # root page, composes scene + UI layers
 │   ├── layout.tsx
 │   └── globals.css
 ├── components/
-│   ├── scene/
-│   │   ├── Avatar.tsx        # player character with billboard sprite
-│   │   ├── AetherCrystal.tsx # animated zone marker
-│   │   ├── WorldGround.tsx   # ground plane + grid
-│   │   ├── GameHUD.tsx       # RPG status panel, XP bar, event log
-│       └── ZonePanel.tsx     # content panel that opens on zone entry
+│   ├── Scene.tsx                # Canvas, lighting rig, zone crystal instances
+│   ├── Avatar.tsx                # player sprite, evolution cosmetics, movement
+│   ├── AetherCrystal.tsx         # zone marker — per-zone geometry, glow, particles
+│   ├── WorldGround.tsx           # ground plane + grid
+│   ├── GameHUD.tsx               # rank, XP bar, event log, reset shortcut
+│   └── ui/
+│       ├── DialogueBox.tsx       # typewriter Keeper dialogue system
+│       └── ZonePanel.tsx         # portfolio content panel per zone
 ├── hooks/
-│   ├── useKeyboardMovement.ts  # WASD/arrow input + proximity detection
-│   └── useCameraFollow.ts      # smooth camera lerp behind avatar
+│   ├── useKeyboardMovement.ts    # WASD/arrow input, proximity detection
+│   ├── useCameraFollow.ts        # smooth isometric camera lerp
+│   └── useDayNight.ts            # local-time-based lighting presets
 ├── store/
-│   └── useGameStore.ts         # zustand: level, XP, visited zones
+│   └── useGameStore.ts           # zustand: level, XP, visited zones, dialogue state
 └── data/
-    └── zones.ts                # zone config: position, content, colors
+    ├── zones.ts                  # zone config — position, color, shape, content
+    └── dialogue.ts                # Keeper names, titles, arrival/leave lines
 ```
 
 ---
 
 ## How the core systems work
 
-**Movement**
+**Movement** — Keys are tracked in a `useRef`, not `useState`, because the render loop reads them 60 times per second. Using state here would trigger 60 re-renders/sec. Movement speed is scaled by `delta` for framerate independence.
 
-Keys are tracked in a `useRef` — not `useState` — because `useFrame` reads them 60 times per second. Using state would cause 60 re-renders per second and kill performance. A `Set` of currently held keys means diagonal movement works naturally.
+**Proximity detection** — Every frame, distance from the avatar to each zone is checked against a trigger radius. Crossing it fires `visitZone`; walking away resets the active zone to `null`.
 
-**Proximity detection**
+**Dialogue gating** — A `dialogueActive` flag in the store determines whether `DialogueBox` or `ZonePanel` renders. First-time zone entry sets the flag true; the panel only appears once dialogue finishes.
 
-Every frame, the hook computes `position.distanceTo(zone.position)` for each zone. If under the trigger radius, `visitZone` fires. An `insideZone` flag after the loop resets `currentZone` to null when the player walks away.
+**XP and level-up** — `gainXP` handles overflow correctly: if XP gained crosses the threshold, the remainder carries into the next level rather than resetting to zero. `xpToNextLevel` scales ×1.5 each level.
 
-**XP and level-up**
+**Evolution cosmetics** — Derived entirely from `visitedZones`, not from level. Each unlocked cosmetic is an independently animated Three.js mesh layered onto the character — no sprite-swapping required.
 
-`gainXP` in the Zustand store handles overflow correctly — if XP gained crosses the threshold, the remainder carries over to the next level rather than resetting to zero. `xpToNextLevel` scales by 1.5x each level.
-
-**Camera follow**
-
-`useCameraFollow` runs in `useFrame` and lerps `camera.position.x` and `camera.position.z` toward `avatarX + 10, avatarZ + 10` each frame, preserving the isometric offset. Lerp factor is multiplied by `delta * 60` to stay framerate-independent.
-
-**HUD**
-
-Pure React HTML absolutely positioned over the canvas. Reads from Zustand with `useGameStore`. No Three.js involved. Zone name uses a stepped interval animation (`scanning → locking → zone name`) on each zone change.
+**Camera follow** — Lerps toward `avatarPosition + isometricOffset` every frame, with lerp speed scaled by `delta` to stay consistent across devices.
 
 ---
 
 ## Getting started
 
 ```bash
-# clone
-git clone https://github.com/yourusername/aether-realm
-cd aether-realm
+git clone https://github.com/SM33-07/Aether-Realm
+cd Aether-Realm
 
-# install
 npm install
-
-# run
 npm run dev
 ```
 
-Open `localhost:3000`. Use **WASD** or **arrow keys** to move. Walk toward a glowing crystal to enter a zone.
+Open `localhost:3000`.
 
 ---
 
@@ -112,25 +126,42 @@ Open `localhost:3000`. Use **WASD** or **arrow keys** to move. Walk toward a glo
 | S / Arrow Down | Move backward (southeast) |
 | A / Arrow Left | Move left (southwest) |
 | D / Arrow Right | Move right (northeast) |
+| Space / Enter / Click | Advance dialogue |
+| Ctrl + Shift + R | Reset saved progress |
 
 ---
 
 ## Roadmap
 
-- [ ] Zone content panels with real portfolio data
-- [ ] Pixel art character sprite via Billboard
-- [ ] Ambient particles and zone atmosphere
-- [ ] Day/night cycle based on visitor local time
-- [ ] Level-up animation and rank reveal
-- [ ] localStorage persistence for progress
-- [ ] Secret hidden zone off the main map
+**Shipped**
+- [x] Four zones with real portfolio content
+- [x] Pixel art character sprite with directional animation
+- [x] NPC dialogue system with typewriter effect
+- [x] Zone-based evolution cosmetics (crown, relic, aura, cape)
+- [x] Level-up VFX
+- [x] Ambient particles and per-zone atmosphere
+- [x] Day/night cycle based on visitor local time
+- [x] localStorage persistence
+- [x] Cinematic camera transitions & letterboxing
+- [x] World-space region titles and waypoint guidance
+
+**In progress**
 - [ ] Mobile touch controls
+- [ ] Performance audit (Lighthouse pass)
+- [ ] Hidden secret zone off the main map
+- [ ] Opt-in ambient audio (Howler.js)
+
+---
+
+## Companion project
+
+A static, animation-driven professional portfolio is in development as the primary recruiter-facing entry point, with Aether Realm linked from it as the deeper interactive experience.
 
 ---
 
 ## Build log
 
-Following the full build publicly on LinkedIn — each post covers one specific technical concept learned during development.
+Built in public — progress and technical breakdowns posted on [LinkedIn](https://www.linkedin.com/in/soham-more-muj). Development combined hands-on implementation with AI-assisted ideation and pair-programming.
 
 ---
 
