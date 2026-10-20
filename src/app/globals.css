@@ -83,22 +83,46 @@ button,
 }
 
 /* ═══════════════════════════════════════
-   Landing Screen — crystal pulse
+   Landing Screen — entrance animations
    ═══════════════════════════════════════ */
 
-@keyframes crystalPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.4),
-      0 0 60px rgba(139, 92, 246, 0.2),
-      0 0 100px rgba(6, 182, 212, 0.15);
-    transform: rotate(45deg) scale(1);
+@keyframes aetherReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  50% {
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.6),
-      0 0 80px rgba(139, 92, 246, 0.3),
-      0 0 120px rgba(6, 182, 212, 0.2);
-    transform: rotate(45deg) scale(1.05);
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes embleSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 0 60px; }
+}
+
+@keyframes progressSweep {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes ctaLineExpand {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* Honour reduced motion — halt decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
