@@ -16,12 +16,40 @@ export default function ZoneTagProjector() {
       tempVec.set(zone.position[0], 2.2, zone.position[2]);
       tempVec.project(camera);
 
+      // Check if within visible camera frustum margin
+      const isVisible =
+        tempVec.z >= -1 &&
+        tempVec.z <= 1 &&
+        tempVec.x >= -1.25 &&
+        tempVec.x <= 1.25 &&
+        tempVec.y >= -1.25 &&
+        tempVec.y <= 1.25;
+
+      if (!isVisible) {
+        el.style.opacity = "0";
+        el.style.pointerEvents = "none";
+        return;
+      }
+
+      el.style.opacity = "1";
+      el.style.pointerEvents = "auto";
+
       // Convert Normalized Device Coordinates (NDC) to screen pixels
       const x = Math.round((tempVec.x * 0.5 + 0.5) * size.width);
       const y = Math.round((-tempVec.y * 0.5 + 0.5) * size.height);
 
-      // GPU-accelerated transform pinning the tag directly above the 3D crystal
-      el.style.transform = `translate(-50%, -100%) translate3d(${x}px, ${y}px, 0px)`;
+      // Clamp screen pixels safely within viewport boundaries to prevent edge clipping
+      const marginX = Math.min(100, size.width * 0.22);
+      const marginY = 50;
+      const clampedX = Math.round(
+        Math.max(marginX, Math.min(size.width - marginX, x))
+      );
+      const clampedY = Math.round(
+        Math.max(marginY, Math.min(size.height - 30, y))
+      );
+
+      // GPU-accelerated transform pinning the tag above the crystal without edge clipping
+      el.style.transform = `translate(-50%, -100%) translate3d(${clampedX}px, ${clampedY}px, 0px)`;
     });
   });
 

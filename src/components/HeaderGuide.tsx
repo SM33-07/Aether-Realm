@@ -33,18 +33,18 @@ export default function HeaderGuide() {
   return (
     <div
       className="
-        fixed top-[calc(max(0.6rem,env(safe-area-inset-top))+7.4rem)] left-3 z-40 pointer-events-none max-w-[calc(100vw-5rem)] sm:max-w-xs
-        md:absolute md:top-4 md:left-1/2 md:right-auto md:max-w-[90vw]
-        md:-translate-x-1/2 md:w-max
+        fixed top-[calc(max(0.6rem,env(safe-area-inset-top))+7.2rem)] left-3 z-40 pointer-events-none max-w-[calc(100vw-5rem)] sm:max-w-xs
+        lg:absolute lg:top-4 lg:left-1/2 lg:right-auto lg:max-w-[90vw]
+        lg:-translate-x-1/2 lg:w-max
       "
     >
       <div
         className="
           flex items-center gap-2.5
-          rounded-xl md:rounded-full
+          rounded-xl lg:rounded-full
           bg-[#09090f]/95 backdrop-blur-md
           border border-purple-500/30
-          px-3 py-2 md:px-5 md:py-2.5
+          px-3 py-2 lg:px-5 lg:py-2.5
           shadow-[0_0_20px_rgba(168,85,247,0.15)]
           font-mono text-xs text-purple-200
         "
@@ -56,21 +56,21 @@ export default function HeaderGuide() {
               : undefined,
         }}
       >
-        <div className="flex shrink-0 items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded-full bg-purple-500/20 border border-purple-400/40 animate-pulse">
-          <span className="text-[9px] md:text-[10px] text-purple-300 font-bold">
+        <div className="flex shrink-0 items-center justify-center w-4 h-4 lg:w-5 lg:h-5 rounded-full bg-purple-500/20 border border-purple-400/40 animate-pulse">
+          <span className="text-[9px] lg:text-[10px] text-purple-300 font-bold">
             ▶
           </span>
         </div>
 
         <div className="min-w-0 flex-1">
           {allVisited ? (
-            <p className="text-emerald-400 font-semibold text-[11px] md:text-xs truncate">
+            <p className="text-emerald-400 font-semibold text-[11px] lg:text-xs truncate">
               ✦ ALL REGIONS UNLOCKED
             </p>
           ) : isNear ? (
             <>
-              {/* Mobile View */}
-              <div className="md:hidden">
+              {/* Mobile / Tablet Touch View */}
+              <div className="lg:hidden">
                 <p className="font-semibold text-[11px] text-gray-100 truncate">
                   NEARBY:{" "}
                   <span style={{ color: targetZone?.color }}>
@@ -81,7 +81,7 @@ export default function HeaderGuide() {
               </div>
 
               {/* Desktop View */}
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden lg:flex items-center gap-2">
                 <span className="text-gray-300">Approach completed. Press</span>
                 <span className="px-2 py-0.5 rounded bg-purple-500/30 border border-purple-400/60 font-bold text-white shadow-[0_0_8px_rgba(168,85,247,0.4)] animate-bounce">
                   E
@@ -94,8 +94,8 @@ export default function HeaderGuide() {
             </>
           ) : (
             <>
-              {/* Mobile View */}
-              <div className="md:hidden">
+              {/* Mobile / Tablet Touch View */}
+              <div className="lg:hidden">
                 <p className="text-[10px] text-purple-300 font-semibold tracking-wide">
                   MISSION TARGET
                 </p>
@@ -111,7 +111,7 @@ export default function HeaderGuide() {
               </div>
 
               {/* Desktop View */}
-              <div className="hidden md:flex items-center gap-2 flex-wrap">
+              <div className="hidden lg:flex items-center gap-2 flex-wrap">
                 <span className="text-gray-400 uppercase tracking-wider text-[10px] font-semibold text-purple-400">
                   MISSION:
                 </span>

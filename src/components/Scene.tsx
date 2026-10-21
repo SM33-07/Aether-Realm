@@ -13,6 +13,7 @@ import WorldParticles from "@/components/WorldParticles";
 import ZoneTagProjector from "@/components/ZoneTagProjector";
 import { useDayNight } from "@/hooks/useDayNight";
 import { ZONES } from "@/data/zones";
+import WorldEnvironment from "@/components/environment/WorldEnvironment";
 
 const zoneTriggers = ZONES.map((zone) => ({
   id: zone.id,
@@ -35,7 +36,7 @@ function ResponsiveCamera() {
 
     const isMobile = size.width < 768;
 
-    camera.zoom = isMobile ? 50 : 80;
+    camera.zoom = isMobile ? 68 : 80;
     camera.updateProjectionMatrix();
   }, [camera, size.width, size.height]);
 
@@ -49,14 +50,21 @@ function SceneInner() {
     <>
       <ResponsiveCamera />
 
-      <color attach="background" args={["#080611"]} />
+      <color attach="background" args={["#0c1424"]} />
+      <fog attach="fog" args={["#0c1424", 26, 42]} />
 
-      <ambientLight intensity={0.2} />
+      <ambientLight intensity={1.1} color="#cbd5e1" />
 
       <directionalLight
-        position={[5, 5, 5]}
-        intensity={2}
-        color="#c084fc"
+        position={[10, 14, 8]}
+        intensity={2.2}
+        color="#fef08a"
+      />
+
+      <directionalLight
+        position={[-8, 8, -8]}
+        intensity={0.55}
+        color="#94a3b8"
       />
 
       <ZoneTagProjector />
@@ -65,6 +73,7 @@ function SceneInner() {
         <WorldGround />
         <WorldParticles />
         <WaypointPath />
+        <WorldEnvironment />
 
         {ZONES.map((zone) => (
           <AetherCrystal

@@ -86,7 +86,7 @@ export default function GameHUD() {
 
   return (
     <div
-      className={`fixed top-[max(0.6rem,env(safe-area-inset-top))] left-[max(0.6rem,env(safe-area-inset-left))] z-30 text-purple-200 p-2.5 sm:p-4 rounded-xl w-[calc(100vw-4.5rem)] max-w-[240px] sm:max-w-[280px] font-mono bg-black/80 backdrop-blur-md border border-purple-500/20 overflow-hidden select-none ${
+      className={`fixed top-[max(0.6rem,env(safe-area-inset-top))] left-[max(0.6rem,env(safe-area-inset-left))] z-30 text-purple-200 p-2.5 sm:p-3.5 [@media(max-height:520px)]:!p-2 rounded-xl w-[calc(100vw-4.5rem)] max-w-[240px] sm:max-w-[270px] [@media(max-height:520px)]:!max-w-[220px] font-mono bg-black/80 backdrop-blur-md border border-purple-500/20 overflow-hidden select-none ${
         glitch ? "translate-x-[2px] skew-x-2" : ""
       }`}
       style={{
@@ -153,8 +153,8 @@ export default function GameHUD() {
         <span className="text-purple-400 font-semibold">{zoneDisplay}</span>
       </div>
 
-      {/* Secondary Event log (hidden on tiny screens, compact on larger) */}
-      <div className="hidden sm:block text-[9px] opacity-65 space-y-0.5 pt-1 border-t border-purple-500/15">
+      {/* Secondary Event log (hidden on tiny screens & short landscape) */}
+      <div className="hidden sm:block [@media(max-height:520px)]:!hidden text-[9px] opacity-65 space-y-0.5 pt-1 border-t border-purple-500/15">
         {log.map((entry, i) => (
           <div key={i} className="truncate">
             {">"} {entry}
