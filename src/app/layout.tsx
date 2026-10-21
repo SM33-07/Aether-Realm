@@ -13,21 +13,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aether Realm — Soham More's Portfolio",
+  title: "Aether Realm — Soham More | Software Engineer & Interactive Portfolio",
   description:
-    "An immersive 3D game-portfolio experience. Explore zones, meet Keepers, and discover projects, skills, and more.",
+    "Software Engineer building interactive experiences, developer tools, and production-ready web applications. Explore Aether Realm, an explorable 3D portfolio featuring full-stack engineering work, systems, and technical leadership.",
   openGraph: {
-    title: "Aether Realm — Soham More's Portfolio",
+    title: "Aether Realm — Soham More | Software Engineer Portfolio",
     description:
-      "An immersive 3D game-portfolio. Explore the Forge, Archives, Oracle, and Gateway.",
+      "Explorable 3D developer portfolio showcasing full-stack projects, systems, developer tools, and technical leadership by Soham More.",
     siteName: "Aether Realm",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aether Realm — Soham More's Portfolio",
+    title: "Aether Realm — Soham More | Software Engineer Portfolio",
     description:
-      "An immersive 3D game-portfolio experience built with Next.js, Three.js, and React Three Fiber.",
+      "Software Engineer building interactive experiences, developer tools, and production-ready web applications.",
   },
 };
 

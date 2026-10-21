@@ -95,7 +95,7 @@ export default function DialogueBox() {
   return (
     <div
       onClick={handleAdvance}
-      className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] left-1/2 -translate-x-1/2 w-[calc(100vw-1.5rem)] sm:w-[720px] max-w-[720px] max-h-[46dvh] overflow-y-auto pointer-events-auto cursor-pointer z-50 touch-manipulation select-none"
+      className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] inset-x-0 mx-auto w-[calc(100vw-1.5rem)] sm:w-[720px] max-w-[720px] max-h-[46dvh] overflow-y-auto pointer-events-auto cursor-pointer z-50 touch-manipulation select-none"
       style={{
         animation: "dialogueEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       }}

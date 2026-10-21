@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import DialogueBox from "@/components/DialogueBox";
 import GameHUD from "@/components/GameHUD";
@@ -31,6 +31,37 @@ export default function Page() {
 
   const [entered, setEntered] = useState(false);
   const [introActive, setIntroActive] = useState(false);
+
+  // URL deep-linking (?zone=the-forge or #the-oracle) & testing support
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as unknown as { __openZone?: (id: string) => void }).__openZone = (
+        zoneId: string
+      ) => {
+        useGameStore.setState({
+          gameStarted: true,
+          currentZone: zoneId,
+          interactionPhase: "content",
+        });
+      };
+
+      const handleDeepLink = () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const target = searchParams.get("zone") || window.location.hash.replace("#", "");
+        if (target && ["the-forge", "the-archives", "the-oracle", "the-gateway"].includes(target)) {
+          useGameStore.setState({
+            gameStarted: true,
+            currentZone: target,
+            interactionPhase: "content",
+          });
+        }
+      };
+
+      handleDeepLink();
+      window.addEventListener("hashchange", handleDeepLink);
+      return () => window.removeEventListener("hashchange", handleDeepLink);
+    }
+  }, []);
 
   const handleEnter = () => {
     setEntered(true);

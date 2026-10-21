@@ -22,7 +22,13 @@ export default function ZoneTagsOverlay() {
           <div
             key={zone.id}
             id={`zone-tag-${zone.id}`}
-            className="absolute top-0 left-0 transition-opacity duration-300 select-none"
+            onClick={() => {
+              useGameStore.setState({
+                currentZone: zone.id,
+                interactionPhase: "content",
+              });
+            }}
+            className="absolute top-0 left-0 transition-opacity duration-300 select-none pointer-events-auto cursor-pointer hover:scale-105 active:scale-95 transition-transform"
             style={{
               transform: 'translate(-50%, -100%) translate3d(-9999px, -9999px, 0)',
               willChange: 'transform',
