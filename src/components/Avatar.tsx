@@ -220,14 +220,9 @@ export default function Avatar({
       frameRef.current /
       FRAME_COUNT;
 
-    // Idle breathing animation
+    // Ground avatar feet firmly to walking surface at Y = 0.494
     if (spriteMeshRef.current) {
-      if (!isMovingRef.current) {
-        spriteMeshRef.current.position.y =
-          1.0 + Math.sin(state.clock.elapsedTime * 3) * 0.035;
-      } else {
-        spriteMeshRef.current.position.y = 1.0;
-      }
+      spriteMeshRef.current.position.y = 0.494;
     }
 
     /* ---------- Crown ---------- */
@@ -243,12 +238,12 @@ export default function Avatar({
         ) * 0.05;
 
       crownRef.current.position.y =
-        1.98 +
+        0.98 +
         Math.sin(
           state.clock.elapsedTime *
           3
         ) *
-        0.015;
+        0.012;
     }
 
     /* ---------- Aura ---------- */
@@ -354,7 +349,7 @@ export default function Avatar({
         );
 
       capeRef.current.position.y =
-        0.5;
+        0.38;
 
       capeRef.current.scale.y =
         1 +
@@ -388,11 +383,11 @@ export default function Avatar({
         radius;
 
       const targetY =
-        1 +
+        0.52 +
         Math.sin(
           angle * 2
         ) *
-        0.1;
+        0.08;
 
       relicRef.current.position.x =
         THREE.MathUtils.lerp(
@@ -429,26 +424,42 @@ export default function Avatar({
     <>
       {/* Avatar Group */}
       <group ref={groupRef}>
-        {/* Ground Ring — dynamically matches last visited zone color */}
+        {/* Realistic Avatar Ground Contact Shadow directly under boots */}
+        <mesh position={[0, 0.007, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.2, 0.65, 1]}>
+          <circleGeometry args={[0.34, 32]} />
+          <meshBasicMaterial
+            color="#040805"
+            transparent
+            opacity={0.5}
+            depthWrite={false}
+          />
+        </mesh>
+        <mesh position={[0, 0.008, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.1, 0.55, 1]}>
+          <circleGeometry args={[0.18, 24]} />
+          <meshBasicMaterial
+            color="#000000"
+            transparent
+            opacity={0.45}
+            depthWrite={false}
+          />
+        </mesh>
+
+        {/* Refined Dynamic Runic Indicator Ring */}
         <mesh
           ref={ringRef}
-          position={[0, 0.01, 0]}
-          rotation={[
-            -Math.PI / 2,
-            0,
-            0,
-          ]}
+          position={[0, 0.009, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
         >
-          <ringGeometry
-            args={[0.5, 0.7, 32]}
-          />
-
+          <ringGeometry args={[0.42, 0.48, 32]} />
           <meshBasicMaterial
             color={
               ZONES.find(
                 (z) => z.id === visitedZones[visitedZones.length - 1]
               )?.color || "#9333ea"
             }
+            transparent
+            opacity={0.65}
+            depthWrite={false}
           />
         </mesh>
 
@@ -458,7 +469,7 @@ export default function Avatar({
               DARK AURA RING (Standing upright behind avatar — unlocks after visiting The Oracle)
           ====================================== */}
           {hasOracle && (
-            <group position={[0, 1.0, -0.05]}>
+            <group position={[0, 0.50, -0.05]}>
               {/* Dark Vertical Void Ring Body */}
               <mesh ref={auraRef}>
                 <ringGeometry args={[0.9, 1.22, 48]} />
@@ -494,10 +505,10 @@ export default function Avatar({
             </group>
           )}
 
-          {/* Sprite */}
+          {/* Sprite — positioned at Y = 0.494 so visible feet touch walking surface at Y = 0.008 */}
           <mesh
             ref={spriteMeshRef}
-            position={[0, 1.0, 0]}
+            position={[0, 0.494, 0]}
           >
             <planeGeometry
               args={[2.4, 2.16]}
@@ -506,7 +517,8 @@ export default function Avatar({
             <meshBasicMaterial
               map={textures.idle_down}
               transparent
-              alphaTest={0.1}
+              alphaTest={0.15}
+              depthWrite={true}
               side={THREE.DoubleSide}
             />
           </mesh>
@@ -521,7 +533,7 @@ export default function Avatar({
               ref={crownRef}
               position={[
                 0,
-                1.98,
+                0.98,
                 0.02,
               ]}
             >
@@ -643,7 +655,7 @@ export default function Avatar({
               color="#06b6d4"
               position={[
                 0,
-                1,
+                0.55,
                 0,
               ]}
             />
@@ -670,7 +682,7 @@ export default function Avatar({
                   color="#c084fc"
                   position={[
                     0,
-                    1,
+                    0.55,
                     -0.02,
                   ]}
                 />
@@ -691,7 +703,7 @@ export default function Avatar({
               speed={1.5}
               opacity={0.4}
               color="#ec4899"
-              position={[0, 1.0, 0]}
+              position={[0, 0.55, 0]}
             />
           )}
         </Billboard>
